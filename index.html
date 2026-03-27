@@ -1,31 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="antialiased">
+<html lang="pt-pt" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Diário de Classe Pro | V53 Neon Edition</title>
+    <title>SGS Pro v12.9.1 - Unified Master Platinum</title>
     
-    <link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234F46E5;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23A3E635;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Cpath d='M30 35h40M30 50h40M30 65h25' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
-
+    <!-- Consolidated Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        'lime-vibrant': '#A3E635',
-                        'lime-dark': '#84CC16',
-                        'indigo-intense': '#312E81',
-                        'indigo-deep': '#1E1B4B',
-                        'status-present': '#A3E635', 
-                        'status-absent': '#F43F5E', 
-                        'status-justified': '#818CF8',
+                        brand: { DEFAULT: '#ffab07', neon: '#ff9100' },
+                        base: { dark: '#0f1214', panel: '#1a1f24', border: '#334155' },
+                        accent: { green: '#16a34a', blue: '#0e8d94', danger: '#dc2626', amber: '#d97706' }
                     }
                 }
             }
@@ -33,737 +31,1011 @@
     </script>
     
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; background-color: #F0F4F8; }
-        body { scroll-behavior: smooth; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .no-scroll { overflow: hidden !important; touch-action: none; }
-        .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
         
-        /* Modais */
+        :root {
+            --bg: #0f1214; --card: #1a1f24; --fg: #f8fafc; --sub: #94a3b8; --border: #334155; --accent: #ffab07;
+        }
+        body.light-mode {
+            --bg: #f8fafc; --card: #ffffff; --fg: #0f172a; --sub: #64748b; --border: #e2e8f0; --accent: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 0.72rem;
+        }
+
+        .text-sub { color: var(--sub); }
+        .text-fg { color: var(--fg); }
+        .bg-base-panel { background-color: var(--card); }
+        .border-base-border { border-color: var(--border); }
+
+        .glass-card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-tab {
+            padding: 8px 14px;
+            font-weight: 800;
+            font-size: 0.58rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--sub);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: rgba(255, 171, 7, 0.05);
+        }
+
+        .status-btn {
+            width: 24px; height: 24px; border-radius: 6px; font-weight: 900; font-size: 0.6rem;
+            transition: all 0.2s; border: 1.5px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+        }
+        .status-btn.active-P { background: #16a34a !important; color: white !important; border-color: transparent !important; }
+        .status-btn.active-F { background: #dc2626 !important; color: white !important; border-color: transparent !important; }
+        .status-btn.active-J { background: #d97706 !important; color: white !important; border-color: transparent !important; }
+
+        #matrix-container table { border-collapse: collapse; width: 100%; font-size: 0.55rem; }
+        #matrix-container th, #matrix-container td { border: 1px solid var(--border); text-align: center; min-width: 18px; height: 22px; }
+        #matrix-container td.sticky-col, #matrix-container th.sticky-col { position: sticky; left: 0; background: var(--card); z-index: 10; min-width: 80px; text-align: left; padding-left: 5px; border-right: 2px solid var(--border); }
+
         .modal-backdrop { 
-            opacity: 0; visibility: hidden; transition: all 0.25s ease; 
-            z-index: 1000; position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-            padding: 1rem; background-color: rgba(30, 27, 75, 0.9); backdrop-filter: blur(12px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
         }
         .modal-backdrop.active { opacity: 1; visibility: visible; }
         
-        .modal-content { 
-            transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            max-height: 92vh; width: 100%; overflow-y: auto; border-radius: 2.5rem; position: relative; 
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        #pdf-offscreen { 
+            position: fixed; 
+            left: -9999px; 
+            top: 0; 
+            width: 794px; 
+            background: white !important; 
+            z-index: -1000; 
+            visibility: visible;
+            pointer-events: none;
+            display: block;
         }
-        .modal-backdrop.active .modal-content { transform: scale(1) translateY(0); }
+
+        #selection-toolbar {
+            transform: translate(-50%, 150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        }
+        #selection-toolbar.visible { transform: translate(-50%, 0); display: flex !important; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; height: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ffab07; border-radius: 10px; }
+
+        .animate-in { animation: fadeIn 0.2s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        .close-icon-btn { position: absolute; top: 1.5rem; right: 1.5rem; padding: 0.5rem; border-radius: 1rem; color: #94a3b8; transition: all 0.2s; border: none; background: transparent; cursor: pointer; z-index: 20; }
-        .close-icon-btn:hover { background-color: #f1f5f9; color: #F43F5E; }
-
-        /* Toasts */
-        .toast { opacity: 0; transform: translate(-50%, 20px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); visibility: hidden; z-index: 6000; position: fixed; bottom: 2rem; left: 50%; }
-        .toast.show { opacity: 1; transform: translate(-50%, 0); visibility: visible; }
-
-        .status-btn { transition: all 0.2s ease; border-radius: 1rem; }
-        .status-btn.active-P { background-color: #A3E635; color: #1E1B4B; box-shadow: 0 4px 14px rgba(163, 230, 53, 0.4); border-color: transparent; }
-        .status-btn.active-F { background-color: #F43F5E; color: white; box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4); border-color: transparent; }
-        .status-btn.active-J { background-color: #818CF8; color: white; box-shadow: 0 4px 14px rgba(129, 140, 248, 0.4); border-color: transparent; }
-        
-        /* Gradients Custom */
-        .bg-grad-lime { background: linear-gradient(135deg, #A3E635 0%, #65A30D 100%); }
-        .bg-grad-indigo { background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%); }
-        .bg-grad-dark { background: linear-gradient(135deg, #312E81 0%, #1E1B4B 100%); }
-        .border-grad { border-image: linear-gradient(to right, #4F46E5, #A3E635) 1; }
-
-        .edit-name { 
-            white-space: pre-wrap; display: block; min-width: 130px; 
-            letter-spacing: 0.01em; word-spacing: 0.1rem; line-height: 1.4; text-transform: uppercase;
-        }
-
-        /* PDF Engine High-Resolution - No Cuts */
-        .pdf-export-mode {
-            width: 1200px !important; 
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 50px !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            transform: none !important;
-            overflow: visible !important;
-            background: #F0F4F8 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-        .dark .pdf-export-mode { background: #0A0A1A !important; }
-        .pdf-export-mode .no-export { display: none !important; }
-        .pdf-export-mode .overflow-x-auto { overflow: visible !important; }
-
-        .sticky-col { position: sticky; left: 0; background: inherit; z-index: 10; }
-
-        @media (max-width: 640px) {
-            .status-btn { width: 2.2rem !important; height: 2.2rem !important; font-size: 9px !important; }
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="dark:bg-[#0A0A1A] text-slate-800 dark:text-slate-100 transition-colors duration-500 no-scroll" id="app-body">
+<body class="overflow-x-hidden select-none">
 
-    <!-- Login -->
-    <div id="login-screen" class="fixed inset-0 bg-indigo-intense flex items-center justify-center p-4">
-        <div class="w-full max-w-sm glass bg-white/10 shadow-2xl rounded-[3rem] p-8 sm:p-10 border border-white/20 text-center">
-            <div class="flex flex-col items-center mb-8">
-                <div class="w-20 h-20 bg-grad-lime rounded-3xl flex items-center justify-center mb-6 shadow-2xl rotate-3">
-                    <svg class="w-12 h-12 text-indigo-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <h2 class="text-4xl font-black text-white tracking-tighter uppercase">DIÁRIO PRO</h2>
-                <p class="text-[10px] font-black text-lime-vibrant mt-2 tracking-widest uppercase">Segurança Ativa V53</p>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 z-[5000] bg-[#0f1214] flex items-center justify-center p-4">
+        <div class="w-full max-w-xs glass-card rounded-[2rem] p-8 text-center border-brand/20 shadow-2xl">
+            <div class="w-14 h-14 bg-brand rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl rotate-3">
+                <i data-lucide="shield-lock" class="w-8 h-8 text-base-dark"></i>
             </div>
-            <form id="login-form">
-                <div class="mb-6">
-                    <input type="password" id="password" autocomplete="current-password" placeholder="••••" class="w-full py-5 px-6 border-2 border-white/10 rounded-2xl bg-black/20 focus:outline-none focus:border-lime-vibrant transition-all text-center font-black tracking-[0.5em] text-white text-2xl">
-                </div>
-                <button type="submit" class="w-full bg-grad-lime text-indigo-deep font-black py-4 rounded-2xl transition shadow-xl active:scale-95 uppercase tracking-widest text-sm">Desbloquear</button>
+            <h2 class="text-xl font-black text-brand uppercase tracking-tighter mb-1">SGS Pro Fusion</h2>
+            <p class="text-[9px] font-bold text-sub uppercase tracking-[0.2em] mb-6">Master Security Access</p>
+            <form id="login-form" onsubmit="App.handleLogin(event)">
+                <input type="password" id="login-pass" placeholder="SENHA" class="w-full py-3 px-4 bg-black/40 border-2 border-white/5 rounded-xl text-center font-black tracking-[0.5em] text-brand focus:border-brand outline-none mb-4">
+                <button type="submit" class="w-full bg-brand text-base-dark font-black py-3 rounded-xl uppercase text-[10px] tracking-widest shadow-lg shadow-brand/20 active:scale-95 transition-all">Entrar</button>
             </form>
         </div>
     </div>
 
-    <!-- Main View -->
-    <main class="container mx-auto px-3 sm:px-4 py-6 md:py-12 max-w-5xl hidden opacity-0 transition-opacity duration-1000" id="main-content">
-        
-        <!-- App Header with Logo -->
-        <header class="glass bg-indigo-intense/5 dark:bg-indigo-intense/20 shadow-2xl border border-indigo-intense/10 dark:border-white/10 rounded-[3rem] p-6 sm:p-8 mb-8 text-center relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-indigo-deep/30">
-                <div id="attendance-progress" class="h-full bg-grad-lime transition-all duration-700 shadow-[0_0_15px_#A3E635]" style="width: 0%"></div>
-            </div>
-            
-            <div class="flex flex-col items-center gap-6 mt-4">
-                <!-- Logotipo Superior -->
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-grad-lime rounded-xl flex items-center justify-center shadow-lg transform -rotate-6">
-                        <svg class="w-7 h-7 text-indigo-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+    <!-- MAIN INTERFACE -->
+    <div id="main-app" class="hidden opacity-0 transition-opacity duration-500">
+        <nav class="sticky top-0 z-[110] glass-card border-x-0 border-t-0 bg-opacity-95 backdrop-blur-md h-12">
+            <div class="max-w-6xl mx-auto flex justify-between items-center px-4 h-full">
+                <div class="flex h-full overflow-x-auto no-scrollbar">
+                    <div id="tab-diary" onclick="App.switchTab('diary')" class="nav-tab active"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i><span>Chamada</span></div>
+                    <div id="tab-matrix" onclick="App.switchTab('matrix')" class="nav-tab"><i data-lucide="grid-3x3" class="w-3.5 h-3.5"></i><span>Matriz</span></div>
+                    <div id="tab-stats" onclick="App.switchTab('stats')" class="nav-tab"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i><span>Dashboard</span></div>
+                    <div id="tab-convert" onclick="App.switchTab('convert')" class="nav-tab"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i><span>Conversor Master</span></div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="hidden md:flex flex-col text-right mr-2 border-r border-border pr-3">
+                        <span id="liveClock" class="text-xs font-black text-brand leading-none">00:00:00</span>
+                        <span id="liveDate" class="text-[8px] font-bold text-sub uppercase">--/--/--</span>
                     </div>
-                    <div class="text-left">
-                        <h1 class="text-sm font-black text-indigo-intense dark:text-lime-vibrant tracking-[0.2em] uppercase leading-none">EduManager</h1>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-white/30 uppercase tracking-widest">Professional Edition</span>
+                    <select id="class-selector" onchange="App.setActiveClass(this.value)" class="bg-brand text-base-dark text-[9px] font-black uppercase rounded-lg px-2 py-1 outline-none shadow-sm cursor-pointer"></select>
+                    <button onclick="App.toggleTheme()" class="p-1.5 glass-card rounded-lg hover:border-brand"><i id="themeIcon" data-lucide="moon" class="w-3.5 h-3.5 text-brand"></i></button>
+                    <button onclick="App.logout()" class="p-1.5 glass-card rounded-lg border-accent-danger/20 text-accent-danger hover:bg-accent-danger/10"><i data-lucide="log-out" class="w-3.5 h-3.5"></i></button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto px-4 py-4 mb-24">
+            
+            <!-- SECTION 1: CHAMADA -->
+            <section id="view-diary" class="space-y-4 animate-in">
+                <div class="grid grid-cols-4 gap-2">
+                    <div class="glass-card p-3 rounded-xl border-l-2 border-brand"><span class="text-[8px] font-black text-sub uppercase block">Total</span><h3 class="text-lg font-black" id="dash-total">0</h3></div>
+                    <div class="glass-card p-3 rounded-xl border-l-2 border-accent-green"><span class="text-[8px] font-black text-accent-green uppercase block">Presentes</span><h3 class="text-lg font-black" id="dash-pres">0</h3></div>
+                    <div class="glass-card p-3 rounded-xl border-l-2 border-accent-danger"><span class="text-[8px] font-black text-accent-danger uppercase block">Faltas</span><h3 class="text-lg font-black" id="dash-abs">0</h3></div>
+                    <div class="glass-card p-3 rounded-xl border-l-2 border-accent-blue"><span class="text-[8px] font-black text-accent-blue uppercase block">Freq.</span><h3 class="text-lg font-black" id="dash-freq">0%</h3></div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 justify-between items-center bg-black/10 p-2 rounded-2xl border border-white/5">
+                    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto">
+                        <input type="date" id="current-date" onchange="App.render()" class="bg-base-panel border border-border rounded-lg px-2 py-1 font-black text-brand outline-none text-[10px]">
+                        <button onclick="App.massStatus('P')" class="px-3 py-1.5 bg-accent-green/10 text-accent-green border border-accent-green/20 rounded-lg font-black uppercase text-[8px] hover:bg-accent-green hover:text-white transition-all whitespace-nowrap">Marcar Todos (P)</button>
+                        <button onclick="App.massStatus('')" class="px-3 py-1.5 glass-card border-white/10 rounded-lg font-black uppercase text-[8px] hover:bg-white/10 transition-all whitespace-nowrap">Limpar Chamada</button>
+                    </div>
+                    <div class="flex gap-1.5 w-full sm:w-auto justify-end">
+                        <button onclick="App.enableAddMode()" class="flex-1 sm:flex-none px-4 py-2 bg-brand text-base-dark rounded-xl font-black uppercase text-[9px] shadow-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> NOVO ALUNO</button>
+                        <button onclick="App.openModal('modal-turmas')" class="p-2 glass-card rounded-lg text-brand" title="Gerenciar Turmas"><i data-lucide="settings" class="w-4 h-4"></i></button>
+                        <button onclick="App.exportDiaryPDF()" class="p-2 glass-card rounded-lg text-accent-danger" title="Exportar Relatório PDF"><i data-lucide="printer" class="w-4 h-4"></i></button>
+                        <button onclick="App.confirmAction('LIMPAR TURMA', 'Remover todos os alunos e histórico desta turma?', () => App.clearActiveStudents())" class="p-2 glass-card rounded-lg text-accent-danger" title="Limpar Turma"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                 </div>
-
-                <div class="w-full">
-                    <div class="flex items-center justify-center gap-4 mb-3">
-                         <h2 id="class-title-header" contenteditable="true" class="text-2xl sm:text-5xl font-black text-indigo-intense dark:text-white truncate focus:ring-0 uppercase tracking-tighter"></h2>
-                         <button id="theme-toggle-btn" class="p-3.5 rounded-2xl bg-indigo-intense/10 dark:bg-white/10 text-indigo-intense dark:text-lime-vibrant hover:bg-lime-vibrant hover:text-indigo-deep transition-all shadow-inner"></button>
-                    </div>
-                    <select id="class-selector" class="text-[10px] font-black bg-grad-dark text-lime-vibrant rounded-full px-6 py-2.5 focus:outline-none uppercase tracking-widest shadow-2xl cursor-pointer border border-white/10"></select>
+                <div class="flex flex-col md:flex-row gap-2">
+                    <div class="relative flex-1"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30"></i><input type="text" id="student-search" oninput="App.render()" placeholder="BUSCAR ESTUDANTE..." class="w-full glass-card py-3 pl-10 pr-4 rounded-xl outline-none focus:ring-2 focus:ring-brand/10 transition-all text-[10px] font-bold uppercase"></div>
+                    <div class="flex gap-1"><button onclick="App.exportCSV()" class="px-4 py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-accent-blue/10 flex items-center gap-2"><i data-lucide="download" class="w-3.5 h-3.5"></i> EXPORTAR CSV</button><label class="px-4 py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-accent-blue/10 flex items-center gap-2 cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5"></i> IMPORTAR CSV<input type="file" onchange="App.importCSV(this)" class="hidden" accept=".csv"></label></div>
                 </div>
-
-                <nav class="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
-                    <button id="diary-btn" title="Matriz" class="p-4 rounded-2xl bg-white dark:bg-white/5 text-indigo-intense dark:text-white hover:text-lime-vibrant hover:bg-grad-dark transition-all border border-slate-100 dark:border-white/10 shadow-lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></button>
-                    <button id="charts-btn" title="Gráficos" class="p-4 rounded-2xl bg-white dark:bg-white/5 text-indigo-intense dark:text-white hover:text-lime-vibrant hover:bg-grad-dark transition-all border border-slate-100 dark:border-white/10 shadow-lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></button>
-                    <button id="reports-btn" title="Relatórios" class="p-4 rounded-2xl bg-white dark:bg-white/5 text-indigo-intense dark:text-white hover:text-lime-vibrant hover:bg-grad-dark transition-all border border-slate-100 dark:border-white/10 shadow-lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></button>
-                    <div class="w-px h-10 bg-indigo-intense/20 dark:bg-white/10 mx-2"></div>
-                    <button id="settings-btn" title="Ajustes" class="p-4 rounded-2xl bg-white dark:bg-white/5 text-indigo-intense dark:text-white hover:text-lime-vibrant hover:bg-grad-dark transition-all border border-slate-100 dark:border-white/10 shadow-lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-                    <button id="logout-btn" title="Sair" class="p-4 rounded-2xl bg-white dark:bg-white/5 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-lg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
-                </nav>
-            </div>
-            
-            <div class="mt-8 pt-6 border-t border-indigo-intense/10 dark:border-white/10 flex flex-col items-center gap-3">
-                <input type="date" id="attendanceDate" class="w-full max-w-xs py-4 px-6 border-2 border-indigo-intense/10 dark:border-white/10 rounded-2xl bg-white/50 dark:bg-black/40 font-black focus:border-lime-vibrant transition-all outline-none text-center text-indigo-intense dark:text-white shadow-inner">
-                <div id="currentTime" class="text-[10px] font-black bg-grad-dark text-lime-vibrant py-2 px-10 rounded-full shadow-2xl border border-white/10 uppercase tracking-widest"></div>
-            </div>
-        </header>
-
-        <div class="grid lg:grid-cols-2 gap-8 mb-8 text-center text-indigo-intense">
-            <!-- Cadastro Section -->
-            <section class="bg-white dark:bg-white/5 shadow-xl border border-slate-200 dark:border-white/10 rounded-[3rem] p-8 flex flex-col items-center">
-                <h3 class="text-xl font-black mb-6 uppercase tracking-widest dark:text-lime-vibrant">Gestão de Alunos</h3>
-                <div class="w-full space-y-6">
-                    <div class="flex gap-2 w-full">
-                        <input type="text" id="studentName" placeholder="NOME DO ALUNO" class="flex-grow py-4 px-6 border-2 border-slate-100 dark:border-white/10 rounded-2xl bg-slate-50 dark:bg-black/20 outline-none focus:border-indigo-intense font-bold text-center uppercase text-sm shadow-inner dark:text-white">
-                        <button id="addStudentBtn" class="bg-grad-lime text-indigo-deep font-black px-7 rounded-2xl active:scale-95 transition-all shadow-xl"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
-                    </div>
-                    <div class="flex flex-wrap justify-center gap-3">
-                        <button id="manage-classes-btn" class="bg-grad-indigo text-white font-black py-3 px-6 rounded-2xl transition text-[10px] uppercase shadow-lg hover:scale-105 active:scale-95">Turmas</button>
-                        <button id="pasteListBtn" class="bg-grad-indigo text-white font-black py-3 px-6 rounded-2xl transition text-[10px] uppercase shadow-lg hover:scale-105 active:scale-95">Importar</button>
-                        <button id="deleteAllStudentsBtn" class="bg-rose-500/10 text-rose-500 font-black py-3 px-6 rounded-2xl transition text-[10px] uppercase border border-rose-500/20 hover:bg-rose-500 hover:text-white shadow-lg">Limpar Tudo</button>
-                    </div>
+                <div class="glass-card rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto custom-scrollbar"><table class="w-full text-left border-collapse table-fixed min-w-[800px]"><thead class="bg-black/20 dark:bg-white/5 border-b border-border"><tr class="text-[9px] font-black uppercase text-sub"><th class="p-3 w-10 text-center"><input type="checkbox" id="select-all" onchange="App.toggleSelectAll(this.checked)" class="accent-brand"></th><th class="p-3 w-12 text-center border-r border-border/30">Nº</th><th class="p-3 w-48">Nome do Estudante</th><th class="p-3 w-28">Data Nasc.</th><th class="p-3 w-16 text-center">Idade</th><th class="p-3 w-32 text-center">Status</th><th class="p-3 w-16 text-center">Ações</th></tr></thead><tbody id="diary-body" class="divide-y divide-border/20"></tbody></table></div>
+                    <div id="diary-empty" class="hidden p-12 text-center"><i data-lucide="users" class="w-12 h-12 mx-auto opacity-10 mb-4 text-brand"></i><p class="text-[10px] font-black uppercase tracking-widest opacity-30">Nenhum aluno cadastrado nesta turma</p></div>
                 </div>
             </section>
-            
-            <section class="bg-white dark:bg-white/5 shadow-xl border border-slate-200 dark:border-white/10 rounded-[3rem] p-8 flex flex-col items-center text-center">
-                <h3 class="text-xl font-black mb-6 uppercase tracking-widest dark:text-lime-vibrant">Comandos Rápidos</h3>
-                <div class="grid grid-cols-2 gap-3 w-full">
-                    <button id="markAllPresentBtn" class="bg-grad-lime text-indigo-deep font-black py-5 rounded-2xl active:scale-95 transition shadow-xl text-[11px] uppercase tracking-widest border border-white/20">Todos Presentes</button>
-                    <button id="markAbsenteesBtn" class="bg-grad-dark text-rose-400 font-black py-5 rounded-2xl active:scale-95 transition shadow-xl text-[11px] uppercase tracking-widest border border-rose-400/30">Lançar Faltas</button>
-                    <button id="clearAllBtn" class="bg-white dark:bg-white/5 text-indigo-intense dark:text-white font-black py-5 rounded-2xl transition-all shadow-lg text-[11px] uppercase tracking-widest border border-slate-100 dark:border-white/10">Remover Status</button>
-                    <button id="exportPdfBtn" class="bg-grad-indigo text-lime-vibrant font-black py-5 rounded-2xl active:scale-95 transition shadow-xl text-[11px] uppercase tracking-widest border border-white/20">Download PDF</button>
-                </div>
-            </section>
-        </div>
 
-        <!-- Lista Principal -->
-        <section id="capture-area" class="bg-white dark:bg-[#0E0E25] shadow-2xl border border-slate-200 dark:border-white/10 rounded-[3rem] overflow-hidden mb-16">
-            <div class="p-8 sm:p-12 border-b border-slate-100 dark:border-white/10 text-center bg-indigo-intense/5 dark:bg-black/20">
-                <div class="flex flex-col items-center gap-6">
-                    <div>
-                        <h2 class="text-2xl sm:text-4xl font-black uppercase tracking-tighter dark:text-white">Relatório de Chamada</h2>
-                        <p id="list-date-display" class="text-xs text-slate-400 dark:text-lime-vibrant font-black mt-2 uppercase tracking-widest opacity-80"></p>
-                    </div>
-                    <div class="flex items-center gap-2 no-export py-2 overflow-x-auto max-w-full custom-scrollbar">
-                        <button onclick="window.filterByStatus(event, 'all')" class="filter-btn active bg-indigo-intense text-lime-vibrant px-6 py-3 rounded-full text-[10px] font-black uppercase shadow-xl whitespace-nowrap">Exibir Todos</button>
-                        <button onclick="window.filterByStatus(event, 'P')" class="filter-btn bg-white dark:bg-white/5 text-slate-500 px-6 py-3 rounded-full text-[10px] font-black uppercase transition-all shadow-sm">Presentes</button>
-                        <button onclick="window.filterByStatus(event, 'F')" class="filter-btn bg-white dark:bg-white/5 text-slate-500 px-6 py-3 rounded-full text-[10px] font-black uppercase transition-all shadow-sm">Faltas</button>
-                    </div>
-                    <div class="relative w-full max-w-md no-export">
-                        <input type="text" id="searchStudent" placeholder="LOCALIZAR ALUNO..." class="w-full py-5 pl-14 pr-8 border-2 border-slate-100 dark:border-white/10 rounded-full bg-white dark:bg-black/30 text-sm outline-none focus:border-lime-vibrant transition-all text-center font-bold uppercase shadow-inner dark:text-white">
-                        <svg class="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-indigo-intense/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    </div>
-                </div>
-                <div id="attendance-summary" class="mt-10 flex flex-wrap justify-center gap-4"></div>
-            </div>
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-center border-collapse">
-                    <thead class="bg-grad-dark text-white border-b dark:border-white/10">
-                        <tr>
-                            <th class="px-4 py-7 text-[15px] font-black w-24 border-r border-white/5">ID</th>
-                            <th class="px-6 py-6 text-[11px] font-black uppercase tracking-widest text-center">Nome do Estudante</th>
-                            <th class="px-6 py-6 text-[11px] font-black uppercase tracking-widest text-center">Status</th>
-                            <th class="px-6 py-6 text-[11px] font-black uppercase no-export text-center">Lançamento</th>
-                        </tr>
-                    </thead>
-                    <tbody id="studentList" class="divide-y divide-slate-100 dark:divide-white/5"></tbody>
-                </table>
-                <div id="empty-state" class="hidden p-24 text-center text-slate-300 dark:text-white/10 font-black text-xs uppercase tracking-widest italic">A base de dados desta turma está vazia.</div>
-            </div>
-        </section>
-    </main>
+            <!-- SECTION 2: MATRIZ -->
+            <section id="view-matrix" class="hidden space-y-4 animate-in"><div class="flex items-center justify-between bg-base-panel p-3 rounded-2xl border border-border"><div class="flex items-center gap-4"><h2 class="text-xs font-black uppercase text-brand tracking-tighter">Matriz Mensal de Frequência</h2><div class="flex items-center gap-2 bg-black/20 rounded-full px-3 py-1 border border-white/5"><button onclick="App.changeMatrixMonth(-1)" class="text-brand hover:scale-125 transition-all"><i data-lucide="chevron-left" class="w-4 h-4"></i></button><span id="matrix-month-label" class="text-[9px] font-black uppercase min-w-[120px] text-center">---</span><button onclick="App.changeMatrixMonth(1)" class="text-brand hover:scale-125 transition-all"><i data-lucide="chevron-right" class="w-4 h-4"></i></button></div></div></div><div class="glass-card rounded-2xl overflow-hidden shadow-2xl bg-black/20"><div id="matrix-container" class="overflow-auto custom-scrollbar max-h-[60vh]"></div></div></section>
 
-    <!-- Modais -->
-    <div id="confirmationModal" class="modal-backdrop">
-        <div class="modal-content bg-white dark:bg-indigo-deep p-8 w-full max-w-sm border-4 border-lime-vibrant text-center shadow-3xl text-indigo-intense dark:text-white">
-            <button class="modal-close-btn close-icon-btn"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-            <h3 class="text-2xl font-black mb-4 uppercase tracking-tighter dark:text-lime-vibrant" id="modalTitle">Aviso</h3>
-            <p class="text-slate-500 dark:text-white/60 mb-10 leading-relaxed font-bold text-sm" id="modalMessage"></p>
-            <div class="flex flex-col gap-3">
-                <button id="confirmButton" class="bg-grad-lime text-indigo-deep font-black py-5 rounded-2xl shadow-2xl uppercase text-[12px] active:scale-95 transition-all">Confirmar Comando</button>
-                <button class="modal-close-btn bg-slate-100 dark:bg-white/5 text-slate-400 font-black py-4 rounded-2xl uppercase text-[10px] hover:text-indigo-intense transition-all">Cancelar</button>
-            </div>
-        </div>
+            <!-- SECTION 3: DASHBOARD -->
+            <section id="view-stats" class="hidden space-y-4 animate-in"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="glass-card p-8 rounded-[2rem] flex flex-col items-center justify-center text-center"><h3 class="text-[10px] font-black uppercase text-brand mb-8 tracking-widest">Desempenho Geral da Turma</h3><div class="w-full max-w-[200px] aspect-square relative"><canvas id="chart-attendance"></canvas></div><div id="chart-legend" class="grid grid-cols-3 gap-6 mt-8 w-full text-center"></div></div><div class="glass-card p-4 rounded-[2rem] overflow-hidden flex flex-col"><h3 class="text-[10px] font-black uppercase text-brand mb-4 px-2 tracking-widest">Assiduidade Individual (%)</h3><div class="flex-1 overflow-y-auto max-h-[350px] custom-scrollbar border border-white/5 rounded-xl bg-black/20"><table class="w-full text-left text-[9px] border-collapse"><thead class="sticky top-0 bg-base-panel z-10 border-b border-border"><tr class="font-black text-sub"><th class="p-3">ALUNO</th><th class="p-3 text-center">P</th><th class="p-3 text-center">F</th><th class="p-3 text-center">MÉDIA</th></tr></thead><tbody id="stats-body" class="divide-y divide-border/10"></tbody></table></div></div></div></section>
+
+            <!-- SECTION 4: CONVERSOR -->
+            <section id="view-convert" class="hidden space-y-4 animate-in"><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div class="space-y-4"><div id="drop-zone" onclick="document.getElementById('file-input').click()" class="group border-2 border-dashed border-white/10 hover:border-brand rounded-3xl p-12 flex flex-col items-center justify-center cursor-pointer transition-all bg-black/5 hover:bg-brand/5"><i data-lucide="file-up" class="w-12 h-12 mb-3 opacity-10 group-hover:text-brand transition-all"></i><p class="text-[10px] font-black uppercase text-brand">Selecionar Ficheiro</p><p class="text-[8px] opacity-40 uppercase font-bold mt-1">PDF • CSV • TXT</p><input type="file" id="file-input" class="hidden" onchange="Converter.handleFile(this.files[0])"></div><textarea id="manual-input" oninput="Converter.updateRaw(this.value)" class="w-full h-56 p-4 text-[10px] font-bold rounded-2xl glass-card bg-transparent focus:ring-2 focus:ring-brand/10 outline-none transition-all custom-scrollbar" placeholder="Ou cole os dados brutos aqui..."></textarea></div><div id="convert-preview" class="hidden flex flex-col gap-4"><div class="glass-card rounded-[2rem] p-6 flex flex-col h-full bg-black/30 border-t-2 border-t-brand"><div class="flex justify-between items-center mb-4"><div class="flex items-center gap-2"><h3 class="text-[10px] font-black uppercase text-brand tracking-widest">Monitor de Extração</h3><span id="importCountTag" class="text-[8px] bg-brand text-base-dark px-3 py-0.5 rounded-full font-black">0</span></div><button onclick="Converter.reset()" class="text-[9px] font-black text-accent-danger uppercase underline">Limpar</button></div><div class="flex-1 overflow-auto custom-scrollbar rounded-xl border border-white/5 bg-black/20 mb-6 min-h-[200px]"><table class="w-full text-left border-collapse text-[9px] font-bold"><thead class="bg-black/50 sticky top-0"><tr id="preview-header"></tr></thead><tbody id="preview-body" class="divide-y divide-white/5 opacity-80"></tbody></table></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2"><button onclick="Converter.sync()" class="col-span-2 md:col-span-4 py-4 bg-accent-green text-white rounded-xl text-[10px] font-black uppercase shadow-lg flex items-center justify-center gap-2 mb-2 active:scale-95 transition-all"><i data-lucide="zap" class="w-4 h-4"></i> Sincronizar com Diário</button><button onclick="Converter.exportExt('csv')" class="py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-brand hover:text-base-dark">CSV</button><button onclick="Converter.exportExt('json')" class="py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-brand hover:text-base-dark">JSON</button><button onclick="Converter.exportExt('pdf')" class="py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-brand hover:text-base-dark">PDF</button><button onclick="Converter.exportExt('txt')" class="py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-brand hover:text-base-dark">TXT</button></div></div></div></div></section>
+        </main>
+
+        <!-- Selection Toolbar -->
+        <div id="selection-toolbar" class="hidden fixed bottom-6 left-1/2 glass-card bg-brand text-base-dark px-8 py-4 rounded-3xl shadow-2xl z-[150] items-center gap-10 border-none min-w-[360px]"><div class="flex flex-col text-center"><span id="sel-count" class="text-2xl font-black leading-none">0</span><span class="text-[8px] font-black uppercase opacity-70 tracking-widest">Marcados</span></div><div class="h-10 w-[1.5px] bg-base-dark/10"></div><div class="flex gap-3"><button onclick="App.batchAction('P')" class="p-3.5 bg-base-dark/5 hover:bg-base-dark/15 rounded-2xl transition-all" title="Presente"><i data-lucide="user-check" class="w-6 h-6"></i></button><button onclick="App.batchAction('F')" class="p-3.5 bg-base-dark/5 hover:bg-base-dark/15 rounded-2xl transition-all" title="Falta"><i data-lucide="user-x" class="w-6 h-6"></i></button><button onclick="App.batchDeleteSelected()" class="p-3.5 bg-accent-danger text-white hover:brightness-110 rounded-2xl transition-all shadow-lg" title="Excluir"><i data-lucide="trash-2" class="w-6 h-6"></i></button></div><button onclick="App.clearSelection()" class="p-1.5 hover:bg-base-dark/10 rounded-full ml-4"><i data-lucide="x" class="w-6 h-6"></i></button></div>
     </div>
 
-    <div id="pasteModal" class="modal-backdrop">
-        <div class="modal-content bg-white dark:bg-indigo-deep p-8 w-full max-w-2xl shadow-3xl border-2 border-lime-vibrant/30 text-indigo-intense dark:text-white">
-            <button class="modal-close-btn close-icon-btn"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-            <h3 class="text-3xl font-black mb-8 uppercase text-center dark:text-lime-vibrant">Sincronização</h3>
-            <div class="grid md:grid-cols-2 gap-8 mb-10">
-                <div class="space-y-4">
-                    <textarea id="pasteTextarea" class="w-full h-56 p-6 border-2 border-slate-100 dark:border-white/10 rounded-[2.5rem] bg-slate-50 dark:bg-black/40 outline-none focus:border-lime-vibrant font-bold text-xs uppercase text-black dark:text-white shadow-inner" placeholder="COLE A LISTA DE NOMES AQUI..."></textarea>
-                    <div class="bg-lime-vibrant/5 border-2 border-dashed border-lime-vibrant/40 p-6 rounded-[2.5rem] text-center">
-                        <label class="cursor-pointer block"><span class="text-[11px] font-black text-indigo-intense dark:text-lime-vibrant uppercase">Upload de Arquivo .CSV</span><input type="file" id="importCsvInput" class="hidden" accept=".csv"></label>
-                    </div>
-                </div>
-                <div class="bg-indigo-intense/5 dark:bg-black/30 p-10 rounded-[3rem] border border-indigo-intense/10 text-center">
-                    <h4 class="text-[12px] font-black uppercase mb-6 tracking-widest text-indigo-intense dark:text-lime-vibrant">Requisitos:</h4>
-                    <ul class="text-[10px] space-y-5 font-bold text-slate-500 dark:text-slate-400 text-left">
-                        <li class="flex items-center gap-2"><div class="w-2 h-2 bg-lime-vibrant rounded-full"></div> Nome Completo (1ª Coluna)</li>
-                        <li class="flex items-center gap-2"><div class="w-2 h-2 bg-lime-vibrant rounded-full"></div> Separador: Vírgula ou Ponto e Vírgula</li>
-                        <li class="flex items-center gap-2"><div class="w-2 h-2 bg-lime-vibrant rounded-full"></div> Alfabetização Automática</li>
-                    </ul>
-                    <button id="downloadTemplateBtn" class="w-full py-4 bg-white dark:bg-white/10 border border-lime-vibrant/30 rounded-2xl text-[10px] font-black text-indigo-intense dark:text-lime-vibrant hover:bg-grad-lime hover:text-indigo-deep mt-8 uppercase transition-all shadow-lg">Baixar Modelo</button>
-                </div>
-            </div>
-            <button id="confirmPasteButton" class="bg-grad-lime text-indigo-deep font-black py-5 w-full rounded-2xl shadow-2xl uppercase text-xs active:scale-95 transition-all">Processar Dados Agora</button>
-        </div>
-    </div>
+    <!-- Modals -->
+    <div id="modal-turmas" class="modal-backdrop"><div class="glass-card p-6 rounded-[2.5rem] max-w-sm w-full animate-in shadow-3xl"><h3 class="text-sm font-black uppercase text-brand mb-6 text-center tracking-widest">Gestão de Unidades</h3><div class="flex gap-2 mb-6"><input type="text" id="new-class-name" placeholder="NOME DA NOVA TURMA" class="flex-grow bg-black/20 border border-border rounded-xl px-4 py-3 text-[10px] font-bold outline-none focus:border-brand uppercase"><button onclick="App.addClass()" class="bg-brand text-base-dark px-6 rounded-xl font-black transition-all shadow-lg shadow-brand/20">+</button></div><div id="class-list" class="space-y-2 overflow-y-auto max-h-[220px] custom-scrollbar pr-2"></div><div class="mt-8 pt-4 border-t border-border flex gap-2"><button onclick="App.openModal('modal-backup')" class="flex-1 py-3 glass-card rounded-xl text-[9px] font-black uppercase hover:bg-brand/5">Segurança & Backup</button><button onclick="App.closeModal()" class="flex-1 py-3 bg-white/5 rounded-xl text-[9px] font-black uppercase">Fechar</button></div></div></div>
+    <div id="modal-backup" class="modal-backdrop"><div class="glass-card p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-3xl text-fg"><h3 class="text-sm font-black uppercase text-brand mb-4">Exportar Base de Dados</h3><div class="flex flex-col gap-3"><button onclick="App.exportBackup()" class="w-full py-4 bg-brand text-base-dark rounded-2xl font-black uppercase text-[10px] shadow-xl hover:scale-105 transition-all">Baixar Backup .JSON</button><label class="w-full py-4 bg-white/5 rounded-2xl font-black uppercase text-[10px] cursor-pointer hover:bg-white/10 transition-all border border-white/5">Restaurar do Arquivo<input type="file" onchange="App.importBackup(this)" class="hidden" accept=".json"></label><button onclick="App.closeModal()" class="mt-4 text-[9px] font-black opacity-30 uppercase hover:opacity-100 transition-opacity">Cancelar Operação</button></div></div></div>
+    <div id="modal-confirm" class="modal-backdrop"><div class="glass-card p-8 rounded-[2.5rem] max-w-sm w-full text-center shadow-3xl animate-in text-fg"><div class="w-14 h-14 bg-accent-danger/10 text-accent-danger rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div><h2 id="confirm-title" class="text-lg font-black text-brand uppercase mb-2">Atenção</h2><p id="confirm-desc" class="text-[11px] font-bold opacity-60 mb-8 leading-relaxed"></p><div class="flex gap-3"><button id="confirm-cancel" onclick="App.closeModal()" class="flex-1 py-3.5 glass-card rounded-2xl text-[10px] font-black uppercase">Cancelar</button><button id="confirm-yes" class="flex-1 py-3.5 bg-accent-danger text-white rounded-2xl text-[10px] font-black uppercase shadow-lg">Confirmar</button></div></div></div>
+    <div id="loading-overlay" class="fixed inset-0 bg-base-dark/95 backdrop-blur-md hidden flex flex-col items-center justify-center z-[10000]"><div class="w-12 h-12 border-4 border-brand/20 border-t-brand rounded-full animate-spin mb-4"></div><p id="loading-msg" class="text-[9px] font-black uppercase tracking-[0.3em] text-brand">A Processar Engine Fusion...</p></div>
 
-    <!-- Modais Auxiliares -->
-    <div id="reportsModal" class="modal-backdrop"><div class="modal-content bg-white dark:bg-indigo-deep p-8 w-full max-w-4xl max-h-[90vh] flex flex-col shadow-3xl border border-white/10"><button class="modal-close-btn close-icon-btn"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button><h3 class="text-3xl font-black mb-8 text-center uppercase dark:text-lime-vibrant">Analítico de Frequência</h3><div id="reports-content" class="flex-grow overflow-y-auto custom-scrollbar border-2 border-indigo-intense/10 dark:border-white/5 rounded-3xl bg-slate-50/50 dark:bg-black/20 shadow-inner"></div></div></div>
-    <div id="diaryModal" class="modal-backdrop"><div class="modal-content bg-white dark:bg-indigo-deep p-8 w-full max-w-[98vw] h-full max-h-[95vh] flex flex-col shadow-3xl border border-white/10"><button class="modal-close-btn close-icon-btn"><svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button><div class="flex flex-col items-center mb-8"><h3 class="text-3xl font-black uppercase dark:text-lime-vibrant">Matriz Escolar Digital</h3><div class="flex items-center gap-8 bg-grad-dark p-4 rounded-full mt-6 shadow-2xl border border-white/10"><button id="prev-month-btn" class="p-2 bg-white/10 rounded-full text-white font-black hover:text-lime-vibrant">&lt;</button><span id="diary-month-year" class="text-white font-black uppercase text-xs min-w-[200px] text-center tracking-widest"></span><button id="next-month-btn" class="p-2 bg-white/10 rounded-full text-white font-black hover:text-lime-vibrant">&gt;</button></div></div><div id="diary-content" class="flex-grow overflow-auto border-2 border-slate-100 dark:border-white/5 rounded-[3rem] bg-white dark:bg-black/40"></div></div></div>
-    <div id="chartsModal" class="modal-backdrop"><div class="modal-content bg-white dark:bg-indigo-deep p-12 w-full max-w-md text-center border-4 border-lime-vibrant shadow-3xl"><button class="modal-close-btn close-icon-btn"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button><h3 class="text-2xl font-black mb-8 uppercase dark:text-lime-vibrant">Métricas Globais</h3><div class="relative h-72 flex items-center justify-center"><canvas id="attendance-chart"></canvas></div></div></div>
-    <div id="manageClassesModal" class="modal-backdrop"><div class="modal-content bg-white dark:bg-indigo-deep p-10 w-full max-w-lg text-center flex flex-col max-h-[90vh] shadow-3xl border-2 border-white/10"><button class="modal-close-btn close-icon-btn"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button><h3 class="text-2xl font-black mb-10 uppercase tracking-widest dark:text-lime-vibrant">Cadastro de Turmas</h3><div class="flex gap-2 mb-8"><input type="text" id="newClassName" placeholder="IDENTIFICAÇÃO DA TURMA" class="flex-grow py-5 px-6 border-2 border-slate-100 dark:border-white/10 rounded-2xl bg-slate-50 dark:bg-black/20 font-bold uppercase text-xs text-white"><button id="addClassBtn" class="bg-grad-lime text-indigo-deep font-black px-7 py-5 rounded-2xl shadow-xl uppercase text-xs active:scale-95 transition-all">Criar</button></div><div id="classList" class="flex-grow overflow-y-auto space-y-4 pr-2 custom-scrollbar"></div></div></div>
-    <div id="settingsModal" class="modal-backdrop"><div class="modal-content bg-white dark:bg-indigo-deep p-12 w-full max-w-lg text-center border-2 border-white/10 shadow-3xl text-indigo-intense dark:text-white"><button class="modal-close-btn close-icon-btn"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button><h3 class="text-3xl font-black mb-12 uppercase dark:text-lime-vibrant">Configurações</h3><div class="space-y-10"><div class="bg-black/20 p-8 rounded-[2.5rem] border border-white/5"><label class="block text-[11px] font-black text-slate-400 mb-6 uppercase tracking-widest">Nova Senha Master</label><input type="password" id="newPassword" placeholder="••••" class="w-full py-5 bg-transparent border-b-2 border-lime-vibrant/30 text-center font-black tracking-[0.6em] text-3xl outline-none focus:border-lime-vibrant text-white"></div><div class="pt-10 border-t border-white/10 flex flex-col gap-5"><button id="exportDataBtn" class="w-full bg-white/5 text-lime-vibrant font-black py-5 rounded-2xl text-xs uppercase border border-lime-vibrant/20 shadow-lg transition-all hover:bg-lime-vibrant hover:text-indigo-deep">Exportar Backup (.JSON)</button><label class="w-full bg-grad-indigo text-white font-black py-5 rounded-2xl text-xs uppercase flex items-center justify-center cursor-pointer shadow-xl transition-all hover:scale-[1.02]">Importar Backup<input type="file" id="importDataInput" class="hidden" accept=".json"></label></div><button id="saveSettingsBtn" class="bg-grad-lime text-indigo-deep font-black py-5 w-full rounded-2xl shadow-2xl uppercase text-xs mt-6 active:scale-95 transition-all">Aplicar Mudanças</button></div></div></div>
+    <!-- PDF Template Offscreen -->
+    <div id="pdf-offscreen"><div id="pdfCaptureArea" style="padding: 40px; background: white !important; color: black !important; min-height: 1120px; font-family: sans-serif;"><div style="border-bottom: 5px solid #ffab07; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end;"><div style="text-align: left;"><h1 id="pdf-title-tpl" style="margin: 0; color: #ffab07 !important; font-size: 26px; font-weight: 900; text-transform: uppercase;">RELATÓRIO</h1><p style="margin: 5px 0 0 0; font-size: 11px; color: #666 !important; font-weight: 800; text-transform: uppercase;">SGS Platinum Master Fusion Edition</p></div><div style="text-align: right; color: #333 !important;"><p style="margin: 0; font-size: 10px; font-weight: 700;" id="pdf-date-tpl"></p><p style="margin: 3px 0 0 0; font-size: 14px; color: #ffab07 !important; font-weight: 900;" id="pdf-class-tpl"></p></div></div><div id="pdf-table-target" style="background: white !important; color: black !important;"></div><div style="margin-top: 50px; text-align: center; border-top: 1px solid #eee; padding-top: 20px; font-size: 9px; color: #999 !important; font-weight: 800; text-transform: uppercase;">Documento Oficial Gerado por SGS Pro Master</div></div></div>
 
-    <!-- UI Feedback Elementos -->
-    <div id="toast" class="toast glass bg-grad-dark text-lime-vibrant py-5 px-12 rounded-full shadow-2xl font-black text-[11px] uppercase text-center border border-lime-vibrant/30 min-w-[300px]"></div>
-    <div id="undo-toast" class="toast glass bg-indigo-intense text-white py-6 px-12 rounded-[3rem] shadow-2xl flex items-center justify-between gap-12 font-black text-[11px] uppercase border border-white/20 min-w-[350px]"><span id="undo-message" class="text-white/50"></span><button id="undo-btn" class="text-lime-vibrant hover:scale-105 transition-all underline underline-offset-8 decoration-2">Restaurar</button></div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const $ = (s) => document.querySelector(s);
-    const $$ = (s) => document.querySelectorAll(s);
-
-    const APP_STORAGE_KEY = 'diario_pro_v53_neon';
-    const LOGGED_IN_KEY = 'auth_v53_active';
-    const DEFAULT_PASSWORD = '1234';
-
-    const STATUSES = {
-        P: { id: 'P', label: 'Presente', color: 'bg-status-present', textClass: 'text-indigo-deep' },
-        F: { id: 'F', label: 'Falta', color: 'bg-status-absent', textClass: 'text-white' },
-        J: { id: 'J', label: 'Justificado', color: 'bg-status-justified', textClass: 'text-white' },
-    };
-
-    let data = {};
-    let activeClassId = null;
-    let currentFilter = 'all';
-    let currentConfirmCallback = null;
-    let saveTimeout = null;
-    let lastActionUndo = null;
-    let diaryState = { year: new Date().getFullYear(), month: new Date().getMonth() };
-    let chartInstance = null;
-
-    const cleanString = (s) => s ? s.replace(/[\uFEFF\u200B-\u200D\u00A0]/g, "").trim().replace(/\s+/g, ' ').toUpperCase() : "";
-
-    const init = () => {
-        loadData();
-        checkLogin();
-        setupEvents();
-        initTheme();
-    };
-
-    const loadData = () => {
-        const stored = localStorage.getItem(APP_STORAGE_KEY);
-        try {
-            data = stored ? JSON.parse(stored) : { password: btoa(DEFAULT_PASSWORD), classes: [], activeClassId: null };
-            if (!data.classes) data.classes = [];
-            if (!data.password) data.password = btoa(DEFAULT_PASSWORD);
-        } catch(e) {
-            data = { password: btoa(DEFAULT_PASSWORD), classes: [], activeClassId: null };
+    <script>
+        // PDF.js Worker initialization
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
-    };
 
-    const saveData = (immediate = false) => {
-        if (saveTimeout) clearTimeout(saveTimeout);
-        const action = () => {
-            data.activeClassId = activeClassId;
-            localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(data));
-            updateProgress();
-            updateSummary();
-        };
-        if (immediate) action(); else saveTimeout = setTimeout(action, 800);
-    };
-
-    const checkLogin = () => {
-        if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') {
-            $('#login-screen').classList.add('hidden');
-            $('#main-content').classList.remove('hidden');
-            $('#app-body').classList.remove('no-scroll');
-            $('#main-content').style.opacity = '1';
-            initApp();
-        }
-    };
-
-    const initApp = () => {
-        if (data.classes.length === 0) {
-            const nc = { id: `c_${Date.now()}`, name: "TURMA GERAL", students: [], history: {} };
-            data.classes.push(nc); activeClassId = nc.id; saveData(true);
-        }
-        activeClassId = data.activeClassId || data.classes[0]?.id;
-        $('#attendanceDate').valueAsDate = new Date();
-        updateClassSelector();
-        renderAll();
-        setInterval(() => {
-            const d = new Date();
-            const el = $('#currentTime');
-            if(el) el.textContent = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit', weekday: 'long' });
-        }, 1000);
-    };
-
-    const getActiveClass = () => data.classes.find(c => c.id === activeClassId);
-
-    const renderAll = () => {
-        const cls = getActiveClass();
-        if (!cls) return;
-        $('#class-title-header').textContent = cls.name;
-        renderStudentList();
-        const d = new Date($('#attendanceDate').value + 'T00:00:00');
-        $('#list-date-display').textContent = d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-    };
-
-    const renderStudentList = () => {
-        const cls = getActiveClass();
-        if (!cls) return;
-        const searchInput = $('#searchStudent');
-        const search = searchInput ? searchInput.value.toLowerCase() : "";
-        const date = $('#attendanceDate').value;
-        const records = cls.history[date] || {};
-
-        let filtered = cls.students.filter(s => s.name.toLowerCase().includes(search));
-        if (currentFilter !== 'all') filtered = filtered.filter(s => records[s.id] === currentFilter);
-
-        filtered.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
-
-        $('#empty-state').classList.toggle('hidden', cls.students.length > 0);
-
-        let html = '';
-        filtered.forEach((s, i) => {
-            const status = records[s.id] || '';
-            html += `
-                <tr data-id="${s.id}" class="hover:bg-indigo-intense/5 dark:hover:bg-white/5 transition-colors">
-                    <td class="px-4 py-8 text-center text-[15px] font-black text-indigo-intense dark:text-lime-vibrant w-24 border-r dark:border-white/5 bg-slate-100/50 dark:bg-black/30">${i + 1}</td>
-                    <td class="px-6 py-6 text-left">
-                        <span contenteditable="true" class="edit-name text-indigo-intense dark:text-white outline-none text-xs sm:text-base font-bold tracking-tight">${s.name}</span>
-                    </td>
-                    <td class="px-4 py-6 text-center">
-                        <span class="status-indicator inline-flex items-center justify-center px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-inner">--</span>
-                    </td>
-                    <td class="px-4 py-6 text-center no-export">
-                        <div class="flex items-center justify-center gap-2">
-                            ${Object.values(STATUSES).map(st => `<button class="status-btn w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center text-[10px] font-black border-2 border-slate-100 dark:border-white/10 transition-all ${status === st.id ? `active-${st.id}` : 'bg-white dark:bg-black/20 text-slate-300'}" data-status="${st.id}">${st.id}</button>`).join('')}
-                            <button class="delete-btn p-3 text-slate-200 hover:text-rose-500 transition-all"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-                        </div>
-                    </td>
-                </tr>`;
-        });
-        $('#studentList').innerHTML = html;
-        $$('#studentList tr').forEach(updateRowIndicator);
-        updateSummary();
-        updateProgress();
-    };
-
-    const updateRowIndicator = (row) => {
-        const cls = getActiveClass();
-        const date = $('#attendanceDate').value;
-        const sid = row.dataset.id;
-        const status = cls.history[date]?.[sid] || '';
-        const ind = row.querySelector('.status-indicator');
-        if (status && STATUSES[status]) {
-            const s = STATUSES[status];
-            ind.textContent = s.label;
-            ind.className = `status-indicator inline-flex items-center justify-center px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${s.color} ${s.textClass} shadow-md`;
-        } else {
-            ind.textContent = 'PENDENTE';
-            ind.className = 'status-indicator inline-flex items-center justify-center px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/20';
-        }
-    };
-
-    const updateSummary = () => {
-        const cls = getActiveClass(); if (!cls) return;
-        const daily = cls.history[$('#attendanceDate').value] || {};
-        const vals = Object.values(daily);
-        $('#attendance-summary').innerHTML = Object.values(STATUSES).map(s => {
-            const c = vals.filter(v => v === s.id).length;
-            return `<div class="flex items-center gap-3 px-5 py-3 rounded-2xl border border-indigo-intense/10 dark:border-white/10 bg-white dark:bg-black/40 shadow-xl"><div class="w-3 h-3 rounded-full ${s.color}"></div><span class="text-[11px] font-black uppercase text-indigo-intense dark:text-lime-vibrant">${s.label}: ${c}</span></div>`;
-        }).join('');
-    };
-
-    const updateProgress = () => {
-        const cls = getActiveClass(); if (!cls) return;
-        const total = cls.students.length;
-        if (total === 0) { $('#attendance-progress').style.width = '0%'; return; }
-        const daily = Object.values(cls.history[$('#attendanceDate').value] || {}).filter(v => v && v !== '').length;
-        $('#attendance-progress').style.width = `${(daily / total) * 100}%`;
-    };
-
-    const setupEvents = () => {
-        const bind = (id, ev, fn) => { const el = $(id); if(el) el.addEventListener(ev, fn); };
-
-        bind('#login-form', 'submit', (e) => {
-            e.preventDefault();
-            const passInput = $('#password').value;
-            let savedPass = "1234";
-            try { savedPass = atob(data.password); } catch(err) {}
-            if (passInput === savedPass) { 
-                sessionStorage.setItem(LOGGED_IN_KEY, 'true'); // FIX: Correct attribution
-                checkLogin(); 
-                showToast("ACESSO LIBERADO"); 
-            }
-            else { showToast("SENHA INCORRETA", "error"); }
-        });
-
-        bind('#logout-btn', 'click', () => showConfirmationModal('Encerrar', 'DESEJA BLOQUEAR O ACESSO?', () => { sessionStorage.removeItem(LOGGED_IN_KEY); location.reload(); }));
-        bind('#attendanceDate', 'change', renderAll);
-        bind('#class-selector', 'change', (e) => { activeClassId = e.target.value; renderAll(); saveData(true); });
-        bind('#searchStudent', 'input', renderStudentList);
-
-        bind('#addStudentBtn', 'click', () => {
-            const name = cleanString($('#studentName').value);
-            const cls = getActiveClass();
-            if (name && cls) {
-                if(cls.students.some(s => s.name === name)) return showToast("NOME JÁ CADASTRADO", "error");
-                cls.students.push({ id: `s_${Date.now()}_${Math.random()}`, name: name });
-                $('#studentName').value = ''; renderStudentList(); saveData(true);
-                showToast("ALUNO CADASTRADO");
-            }
-        });
-
-        bind('#studentList', 'click', (e) => {
-            const btn = e.target.closest('button'); if (!btn) return;
-            const row = btn.closest('tr');
-            const sid = row.dataset.id;
-            const cls = getActiveClass();
-            if (btn.classList.contains('status-btn')) {
-                const d = $('#attendanceDate').value;
-                if (!cls.history[d]) cls.history[d] = {};
-                const newStatus = (cls.history[d][sid] === btn.dataset.status) ? '' : btn.dataset.status;
-                cls.history[d][sid] = newStatus;
-                updateRowIndicator(row);
-                updateSummary();
-                saveData();
-                renderStudentList();
-            } else if (btn.classList.contains('delete-btn')) {
-                showConfirmationModal('Exclusão', 'REMOVER ESTE ALUNO PERMANENTEMENTE?', () => {
-                    const studentIdx = cls.students.findIndex(x => x.id === sid);
-                    lastActionUndo = { type: 'del', clsId: activeClassId, student: cls.students[studentIdx], idx: studentIdx };
-                    cls.students.splice(studentIdx, 1);
-                    renderStudentList(); saveData(true); showUndoToast("Removido");
-                });
-            }
-        });
-
-        bind('#studentList', 'blur', (e) => {
-            if (e.target.classList.contains('edit-name')) {
-                const sid = e.target.closest('tr').dataset.id;
-                const cls = getActiveClass();
-                const n = cleanString(e.target.textContent);
-                const s = cls.students.find(x => x.id === sid);
-                if (n && s && s.name !== n) { s.name = n; saveData(); }
-                else if (!n && s) { e.target.textContent = s.name; }
-            }
-        }, true);
-
-        bind('#deleteAllStudentsBtn', 'click', () => {
-            showConfirmationModal('Limpeza', 'DESEJA APAGAR TODA A LISTA DE ALUNOS?', () => {
-                const cls = getActiveClass();
-                lastActionUndo = { type: 'del_all', clsId: activeClassId, students: [...cls.students] };
-                cls.students = [];
-                renderStudentList(); saveData(true); showUndoToast('Lista esvaziada');
-            });
-        });
-
-        bind('#markAllPresentBtn', 'click', () => massStatus('P'));
-        bind('#markAbsenteesBtn', 'click', () => massStatus('F', true));
-        bind('#clearAllBtn', 'click', () => massStatus(''));
-        
-        bind('#diary-btn', 'click', openDiary);
-        bind('#charts-btn', 'click', openCharts);
-        bind('#reports-btn', 'click', openReports);
-        bind('#manage-classes-btn', 'click', () => { renderClassList(); openModal('#manageClassesModal'); });
-        bind('#pasteListBtn', 'click', () => openModal('#pasteModal'));
-        bind('#settings-btn', 'click', () => openModal('#settingsModal'));
-
-        bind('#importCsvInput', 'change', handleCsv);
-        bind('#downloadTemplateBtn', 'click', downloadTemplate);
-        bind('#confirmPasteButton', 'click', confirmPaste);
-        bind('#saveSettingsBtn', 'click', () => {
-            const np = $('#newPassword').value;
-            if (np && np.length >= 4) {
-                data.password = btoa(np); $('#newPassword').value = ''; showToast("SENHA ATUALIZADA"); saveData(true); closeModal();
-            } else showToast("MÍNIMO 4 CARACTERES", "error");
-        });
-        bind('#exportPdfBtn', 'click', exportPdf);
-        bind('#undo-btn', 'click', handleUndo);
-        bind('#prev-month-btn', 'click', () => { diaryState.month--; renderDiary(); });
-        bind('#next-month-btn', 'click', () => { diaryState.month++; renderDiary(); });
-
-        bind('#confirmButton', 'click', () => { if (currentConfirmCallback) { currentConfirmCallback(); currentConfirmCallback = null; } closeModal(); });
-
-        $$('.modal-close-btn').forEach(b => b.addEventListener('click', closeModal));
-        $$('.modal-backdrop').forEach(m => { m.addEventListener('click', (e) => { if (e.target === m && m.id !== 'login-screen') closeModal(); }); });
-        window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-        bind('#addClassBtn', 'click', () => {
-            const n = cleanString($('#newClassName').value);
-            if (n) {
-                const nc = { id: `c_${Date.now()}`, name: n, students: [], history: {} };
-                data.classes.push(nc); activeClassId = nc.id; $('#newClassName').value = '';
-                updateClassSelector(); renderClassList(); renderAll(); saveData(true);
-            }
-        });
-    };
-
-    const massStatus = (s, onlyEmpty = false) => {
-        const cls = getActiveClass(); const d = $('#attendanceDate').value;
-        if (!cls.history[d]) cls.history[d] = {};
-        cls.students.forEach(st => { if (!onlyEmpty || !cls.history[d][st.id]) cls.history[d][st.id] = s; });
-        renderStudentList(); saveData(true);
-    };
-
-    const updateClassSelector = () => { $('#class-selector').innerHTML = data.classes.map(c => `<option value="${c.id}" ${c.id === activeClassId ? 'selected' : ''}>${c.name}</option>`).join(''); };
-
-    const renderClassList = () => {
-        $('#classList').innerHTML = data.classes.map(c => `
-            <div class="flex items-center justify-between p-6 bg-slate-50 dark:bg-white/5 rounded-3xl border border-transparent hover:border-lime-vibrant transition-all shadow-md">
-                <span class="font-black text-xs uppercase text-indigo-intense dark:text-white tracking-widest">${c.name}</span>
-                <button onclick="window.removeTurma('${c.id}')" class="text-rose-500 p-2 hover:bg-rose-50 rounded-xl"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-            </div>
-        `).join('');
-    };
-
-    window.removeTurma = (id) => {
-        if (data.classes.length <= 1) return showToast("AÇÃO NEGADA", "error");
-        showConfirmationModal('Excluir Turma', 'APAGAR TODOS OS DADOS DESTA TURMA DEFINITIVAMENTE?', () => { 
-            data.classes = data.classes.filter(c => c.id !== id); 
-            if (activeClassId === id) activeClassId = data.classes[0].id; 
-            updateClassSelector(); renderClassList(); renderAll(); saveData(true); 
-        });
-    };
-
-    const openReports = () => {
-        const cls = getActiveClass();
-        const stats = cls.students.map(s => {
-            let p = 0, f = 0, j = 0;
-            Object.values(cls.history).forEach(day => { if (day[s.id] === 'P') p++; else if (day[s.id] === 'F') f++; else if (day[s.id] === 'J') j++; });
-            const tot = p + f + j;
-            return { name: s.name, p, f, j, perc: tot > 0 ? ((p / tot) * 100).toFixed(1) : "0.0" };
-        }).sort((a,b) => a.name.localeCompare(b.name));
-
-        $('#reports-content').innerHTML = `
-            <table class="w-full text-center text-[10px] border-collapse">
-                <thead class="bg-grad-dark font-black uppercase text-white">
-                    <tr><th class="p-5 text-left">ALUNO</th><th class="p-5">P</th><th class="p-5 text-right">FREQUÊNCIA</th></tr>
-                </thead>
-                <tbody class="divide-y dark:divide-white/10 text-indigo-intense dark:text-white">
-                    ${stats.map(s => `<tr><td class="p-5 font-bold uppercase text-left truncate max-w-[180px]">${s.name}</td><td class="p-5 text-lime-dark font-black">${s.p}</td><td class="p-5 text-right"><span class="px-3 py-1.5 rounded-full bg-indigo-intense/10 dark:bg-white/5 font-black text-indigo-intense dark:text-lime-vibrant">${s.perc}%</span></td></tr>`).join('')}
-                </tbody>
-            </table>`;
-        openModal('#reportsModal');
-    };
-
-    const renderDiary = () => {
-        const cls = getActiveClass();
-        const date = new Date(diaryState.year, diaryState.month, 1);
-        const days = new Date(diaryState.year, diaryState.month + 1, 0).getDate();
-        $('#diary-month-year').textContent = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        let h = `<table class="w-full text-[9px] text-center border-collapse"><thead class="bg-grad-dark sticky top-0 z-30 text-white"><tr><th class="p-4 sticky-col bg-indigo-deep text-left uppercase z-40 border-r border-white/10 min-w-[180px]">Estudantes</th>`;
-        for (let d = 1; d <= days; d++) h += `<th class="p-2 border-l border-white/5 min-w-[30px]">${d}</th>`;
-        h += `</tr></thead><tbody class="divide-y dark:divide-white/5 text-indigo-intense dark:text-white">`;
-        cls.students.sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
-            h += `<tr class="hover:bg-slate-50 dark:hover:bg-white/5"><td class="p-4 font-bold sticky-col bg-white dark:bg-indigo-deep z-20 text-left uppercase border-r border-slate-100 dark:border-white/5 truncate max-w-[180px]">${s.name}</td>`;
-            for (let d = 1; d <= days; d++) {
-                const ds = `${diaryState.year}-${String(diaryState.month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                const st = cls.history[ds]?.[s.id] || '';
-                h += `<td class="p-2 border-l dark:border-white/5 font-black ${st ? STATUSES[st].color + ' ' + STATUSES[st].textClass + ' rounded-lg' : 'text-slate-100 dark:text-white/5'}">${st || '-'}</td>`;
-            }
-            h += `</tr>`;
-        });
-        $('#diary-content').innerHTML = h + `</tbody></table>`;
-    };
-
-    const openDiary = () => { renderDiary(); openModal('#diaryModal'); };
-
-    const openCharts = () => {
-        const cls = getActiveClass();
-        const stats = { P: 0, F: 0, J: 0 };
-        Object.values(cls.history).forEach(day => { Object.values(day).forEach(v => { if(stats[v] !== undefined) stats[v]++; }); });
-        const ctx = $('#attendance-chart').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: { labels: ['Presenças', 'Faltas', 'Justificadas'], datasets: [{ data: [stats.P, stats.F, stats.J], backgroundColor: ['#A3E635', '#F43F5E', '#818CF8'], borderWidth: 0 }] },
-            options: { plugins: { legend: { position: 'bottom', labels: { color: '#888', font: { weight: 'bold', size: 10 } } } }, cutout: '75%' }
-        });
-        openModal('#chartsModal');
-    };
-
-    const downloadTemplate = () => {
-        const csv = "\uFEFFNome;Status\nALUNO EXEMPLO;P\nALUNO EXEMPLO 2;F";
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "modelo_chamada.csv"; a.click();
-    };
-
-    const confirmPaste = () => {
-        const names = $('#pasteTextarea').value.split('\n').map(n => cleanString(n)).filter(n => n);
-        const cls = getActiveClass();
-        let added = 0;
-        names.forEach(n => { if (!cls.students.some(s => s.name === n)) { cls.students.push({ id: `s_${Date.now()}_${Math.random()}`, name: n }); added++; } });
-        $('#pasteTextarea').value = ''; closeModal(); renderStudentList(); saveData(true); 
-        showToast(`${added} ALUNOS INCORPORADOS`);
-    };
-
-    const handleCsv = (e) => {
-        const file = e.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            let content = ev.target.result.replace(/^\uFEFF/, ""); 
-            const lines = content.split(/\r?\n/).filter(l => l.trim() !== "");
-            const cls = getActiveClass();
-            let added = 0;
-            lines.forEach(l => {
-                const parts = l.includes(';') ? l.split(';') : l.split(',');
-                let n = cleanString(parts[0]);
-                if (n && !["NOME", "ALUNO", "NAME", "ESTUDANTE"].includes(n)) { 
-                    if (!cls.students.some(s => s.name === n)) { cls.students.push({ id: `s_${Date.now()}_${Math.random()}`, name: n }); added++; }
-                }
-            });
-            e.target.value = "";
-            if (added > 0) { closeModal(); renderStudentList(); saveData(true); showToast(`${added} ALUNOS IMPORTADOS`); }
-            else showToast("NADA A IMPORTAR", "error");
-        };
-        reader.readAsText(file, "UTF-8");
-    };
-
-    const exportPdf = () => {
-        const element = $('#capture-area');
-        const filename = `DIARIO_${getActiveClass().name}_${$('#attendanceDate').value}.pdf`;
-        
-        showToast("GERANDO FOTO DE ALTA DEFINIÇÃO...");
-
-        element.classList.add('pdf-export-mode');
-
-        const realWidth = 1200; 
-        const realHeight = element.scrollHeight + 100;
-
-        const opt = {
-            margin: 0,
-            filename: filename,
-            image: { type: 'jpeg', quality: 1.0 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                letterRendering: true,
-                backgroundColor: null, 
-                logging: false,
-                scrollX: 0,
-                scrollY: 0,
-                windowWidth: realWidth,
-                windowHeight: realHeight
+        const App = {
+            data: {
+                classes: [],
+                activeClassId: null,
+                password: btoa('1234'),
+                theme: 'dark'
             },
-            jsPDF: { 
-                unit: 'pt', 
-                format: [realWidth, realHeight], 
-                orientation: 'portrait' 
+            selectedUids: new Set(),
+            isAdding: false,
+            matrixState: { month: new Date().getMonth(), year: new Date().getFullYear() },
+            chartInstance: null,
+
+            init() {
+                const stored = localStorage.getItem('sgs_master_fusion_v12_9');
+                if (stored) {
+                    try { 
+                        this.data = JSON.parse(stored);
+                    } catch(e) {}
+                }
+                
+                if (!this.data.classes || this.data.classes.length === 0) {
+                    const id = 'c_' + Date.now();
+                    const defaultNames = [
+                        "AFONSO CARDOSO", "ANA SILVA", "BEATRIZ CUNHA", "BRUNO SANTOS", "CAIO MACHADO", 
+                        "CARLA OLIVEIRA", "DAVID SOUZA", "DIOGO ROCHA", "EDUARDA SARAIVA", "ELIANA COSTA", 
+                        "FABIO PEREIRA", "FELIPE NEVES", "GABRIELA RODRIGUES", "GIOVANA FREITAS", "HENRIQUE MELLO", 
+                        "HUGO ALMEIDA", "IGOR RAMOS", "ISABEL NASCIMENTO", "JOÃO LOPES", "JULIANA CORDEIRO", 
+                        "KAREN GOMES", "LEONARDO ARAGÃO", "LUCAS MARTINS", "MARCELO VIANA", "MARIA FERNANDES", 
+                        "NATÁLIA MOURA", "NUNO GONÇALVES", "OLIVIA CARVALHO", "OTÁVIO BORGES", "PATRÍCIA SALES", 
+                        "PEDRO TEIXEIRA", "QUITÉRIA RIBEIRO", "RENATO BRAGA", "RICARDO MOREIRA", "SARA PINTO", 
+                        "TIAGO BARBOSA", "URSULA CAVALCANTE", "VITOR CORREIA", "WAGNER DIAS", "XAVIER CASTRO", 
+                        "YARA VIEIRA", "ZÉLIA MONTEIRO"
+                    ];
+                    const defaultStudents = defaultNames.map(name => ({ 
+                        id: 's_' + Math.random().toString(36).substr(2, 9), 
+                        name: name.toUpperCase(),
+                        birthDate: '',
+                        sexo: '',
+                        idNumber: ''
+                    }));
+                    this.data.classes = [{ id, name: "TURMA PLATINUM (42)", students: defaultStudents, history: {} }];
+                    this.data.activeClassId = id;
+                    this.save();
+                }
+
+                document.getElementById('current-date').valueAsDate = new Date();
+                this.applyTheme();
+                this.initClock();
+                if (sessionStorage.getItem('sgs_auth_v12') === 'true') { this.unlock(); }
+                lucide.createIcons();
+            },
+
+            save() { localStorage.setItem('sgs_master_fusion_v12_9', JSON.stringify(this.data)); },
+
+            handleLogin(e) {
+                e.preventDefault();
+                const pass = document.getElementById('login-pass').value;
+                if (pass === atob(this.data.password)) {
+                    sessionStorage.setItem('sgs_auth_v12', 'true');
+                    this.unlock();
+                } else this.showMessage("Acesso Negado", "Senha incorreta. Tente novamente.", "error");
+            },
+
+            unlock() {
+                document.getElementById('login-screen').style.display = 'none';
+                const main = document.getElementById('main-app');
+                main.classList.remove('hidden');
+                setTimeout(() => main.classList.add('opacity-100'), 50);
+                this.render();
+            },
+
+            logout() { sessionStorage.removeItem('sgs_auth_v12'); location.reload(); },
+
+            initClock() {
+                const clock = document.getElementById('liveClock'), date = document.getElementById('liveDate');
+                const update = () => {
+                    const now = new Date();
+                    clock.innerText = now.toLocaleTimeString('pt-PT');
+                    date.innerText = now.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                };
+                update(); setInterval(update, 1000);
+            },
+
+            getActiveClass() { return this.data.classes.find(c => c.id === this.data.activeClassId); },
+            setActiveClass(id) { this.data.activeClassId = id; this.save(); this.render(); },
+
+            switchTab(tab) {
+                document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById(`view-${tab}`).classList.remove('hidden');
+                document.getElementById(`tab-${tab}`).classList.add('active');
+                if (tab === 'diary') this.render();
+                if (tab === 'matrix') this.renderMatrix();
+                if (tab === 'stats') this.renderStats();
+                lucide.createIcons();
+            },
+
+            // Converte várias representações de data para YYYY-MM-DD
+            parseDateToISO(dateStr) {
+                if (!dateStr) return '';
+                // já está em formato YYYY-MM-DD
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+                // tenta DD/MM/YYYY ou DD-MM-YYYY
+                let parts = dateStr.split(/[\/\-]/);
+                if (parts.length === 3) {
+                    let [d, m, y] = parts;
+                    if (d.length === 4) { // formato YYYY/MM/DD
+                        [y, m, d] = parts;
+                    }
+                    if (y.length === 4 && m.length === 2 && d.length === 2) {
+                        return `${y}-${m}-${d}`;
+                    }
+                }
+                // tenta Date.parse
+                const date = new Date(dateStr);
+                if (!isNaN(date.getTime())) {
+                    return date.toISOString().split('T')[0];
+                }
+                return dateStr; // fallback
+            },
+
+            calculateAge(birthDateStr) {
+                if (!birthDateStr) return '';
+                const isoDate = this.parseDateToISO(birthDateStr);
+                const today = new Date();
+                const birth = new Date(isoDate);
+                if (isNaN(birth.getTime())) return '';
+                let age = today.getFullYear() - birth.getFullYear();
+                const m = today.getMonth() - birth.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+                return age;
+            },
+
+            render() {
+                const cls = this.getActiveClass();
+                if (!cls) return;
+                
+                const container = document.getElementById('diary-body');
+                const empty = document.getElementById('diary-empty');
+                const date = document.getElementById('current-date').value;
+                const search = document.getElementById('student-search').value.toLowerCase();
+                
+                document.getElementById('class-selector').innerHTML = this.data.classes.map(c => 
+                    `<option value="${c.id}" ${c.id === this.data.activeClassId ? 'selected' : ''}>${c.name}</option>`
+                ).join('');
+
+                container.innerHTML = "";
+                const records = cls.history[date] || {};
+
+                if (this.isAdding) {
+                    const tr = document.createElement('tr');
+                    tr.className = "bg-brand/10 border-l-2 border-l-brand animate-in";
+                    tr.innerHTML = `<td class="p-3"><td class="p-3 text-center opacity-20 border-r border-border/30">--<td class="p-3" colspan="2"><input type="text" id="add-name" placeholder="NOME DO ALUNO + ENTER" class="bg-transparent w-full font-black text-brand outline-none uppercase text-[11px]"><td class="p-3" colspan="2"><td class="p-3 text-center"><button onclick="App.confirmAdd()" class="text-accent-green"><i data-lucide="check-circle" class="w-6 h-6"></i></button>`;
+                    container.appendChild(tr);
+                    const inp = document.getElementById('add-name');
+                    if(inp) {
+                        inp.focus();
+                        inp.onkeydown = (e) => { if(e.key === 'Enter') App.confirmAdd(); if(e.key === 'Escape') { App.isAdding = false; App.render(); } };
+                    }
+                    lucide.createIcons();
+                }
+
+                const students = [...cls.students].sort((a,b) => a.name.localeCompare(b.name, 'pt-BR')).filter(s => s.name.toLowerCase().includes(search));
+
+                students.forEach((s, idx) => {
+                    const isSel = this.selectedUids.has(s.id);
+                    const status = records[s.id] || '';
+                    const age = this.calculateAge(s.birthDate);
+                    const tr = document.createElement('tr');
+                    tr.className = `transition-all border-b border-border/20 ${isSel ? 'bg-brand/5 border-l-4 border-l-brand' : 'hover:bg-white/[0.02]'}`;
+                    tr.innerHTML = `
+                        <td class="p-2 text-center"><input type="checkbox" ${isSel ? 'checked' : ''} onchange="App.toggleSel('${s.id}')" class="accent-brand w-4 h-4">
+                        <td class="p-2 text-center font-mono opacity-30 text-[10px] border-r border-border/30">${(idx+1).toString().padStart(2, '0')}
+                        <td class="p-2"><input type="text" value="${s.name.replace(/'/g, "\\'")}" onblur="App.renameStudent('${s.id}', this.value)" class="bg-transparent w-full font-bold uppercase outline-none focus:text-brand truncate border-none text-[11px]">
+                        <td class="p-2"><input type="text" value="${s.birthDate || ''}" placeholder="DD/MM/AAAA" onblur="App.updateStudentField('${s.id}', 'birthDate', this.value)" class="bg-transparent w-full text-[9px] font-mono outline-none focus:text-brand border-none">
+                        <td class="p-2 text-center font-mono text-[9px]">${age}
+                        <td class="p-2 text-center"><div class="flex items-center justify-center gap-1.5">${['P','F','J'].map(st => `<button onclick="App.markStatus('${s.id}', '${st}')" class="status-btn ${status === st ? 'active-'+st : 'text-sub/40'}">${st}</button>`).join('')}</div>
+                        <td class="p-2 text-center"><button onclick="App.deleteStudent('${s.id}')" class="text-accent-danger opacity-20 hover:opacity-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    `;
+                    container.appendChild(tr);
+                });
+
+                if(empty) empty.classList.toggle('hidden', students.length > 0 || this.isAdding);
+                this.updateDash();
+                lucide.createIcons();
+            },
+
+            updateStudentField(id, field, value) {
+                const cls = this.getActiveClass();
+                const student = cls.students.find(s => s.id === id);
+                if (student) {
+                    if (field === 'birthDate') value = this.parseDateToISO(value);
+                    student[field] = value;
+                    this.save();
+                    this.render();
+                }
+            },
+
+            updateDash() {
+                const cls = this.getActiveClass();
+                const date = document.getElementById('current-date').value;
+                const records = Object.values(cls.history[date] || {});
+                const total = cls.students.length;
+                const p = records.filter(v => v === 'P').length;
+                const f = records.filter(v => v === 'F').length;
+                
+                document.getElementById('dash-total').innerText = total;
+                document.getElementById('dash-pres').innerText = p;
+                document.getElementById('dash-abs').innerText = f;
+                document.getElementById('dash-freq').innerText = total > 0 ? ((p / total) * 100).toFixed(0) + '%' : '0%';
+            },
+
+            markStatus(sid, st) {
+                const cls = this.getActiveClass();
+                const date = document.getElementById('current-date').value;
+                if (!cls.history[date]) cls.history[date] = {};
+                cls.history[date][sid] = (cls.history[date][sid] === st) ? '' : st;
+                this.save(); this.render();
+            },
+
+            massStatus(st) {
+                const cls = this.getActiveClass();
+                const date = document.getElementById('current-date').value;
+                if (!cls.history[date]) cls.history[date] = {};
+                cls.students.forEach(s => cls.history[date][s.id] = st);
+                this.save(); this.render();
+            },
+
+            enableAddMode() { this.isAdding = true; this.render(); },
+            confirmAdd() {
+                const val = document.getElementById('add-name').value.trim().toUpperCase();
+                if (val) {
+                    const cls = this.getActiveClass();
+                    cls.students.push({ id: 's_' + Date.now() + Math.random(), name: val, birthDate: '', sexo: '', idNumber: '' });
+                    this.isAdding = false; this.save(); this.render();
+                }
+            },
+
+            renameStudent(id, val) {
+                const cls = this.getActiveClass();
+                const s = cls.students.find(x => x.id === id);
+                if (s && val.trim()) { s.name = val.trim().toUpperCase(); this.save(); }
+            },
+
+            deleteStudent(id) {
+                const cls = this.getActiveClass();
+                const s = cls.students.find(x => x.id === id);
+                this.confirm("Excluir Estudante?", `Remover permanentemente ${s.name} do sistema?`, () => {
+                    cls.students = cls.students.filter(x => x.id !== id);
+                    this.save(); this.render();
+                });
+            },
+
+            renderMatrix() {
+                const cls = this.getActiveClass();
+                const container = document.getElementById('matrix-container');
+                const { month, year } = this.matrixState;
+                const days = new Date(year, month + 1, 0).getDate();
+                document.getElementById('matrix-month-label').textContent = new Date(year, month).toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }).toUpperCase();
+                
+                let h = `<table class="bg-card"><thead><th class="sticky-col text-brand font-black uppercase text-[8px]">ALUNO</th>`;
+                for (let d = 1; d <= days; d++) h += `<th class="p-1 border-border/30 bg-black/10 text-fg">${d}</th>`;
+                h += `</thead><tbody>`;
+                [...cls.students].sort((a,b) => a.name.localeCompare(b.name)).forEach(s => {
+                    h += `<td class="sticky-col font-black uppercase truncate border-r border-border/50 text-[9px] text-fg">${s.name}`;
+                    for (let d = 1; d <= days; d++) {
+                        const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                        const st = cls.history[ds]?.[s.id] || '';
+                        let color = st === 'P' ? 'text-accent-green' : (st === 'F' ? 'text-accent-danger' : (st === 'J' ? 'text-accent-amber' : 'text-sub/30'));
+                        h += `<td class="${color} font-black text-[9px] border-border/10">${st || '-'}`;
+                    }
+                    h += `}`;
+                });
+                container.innerHTML = h + `</tbody>`;
+            },
+
+            changeMatrixMonth(delta) {
+                this.matrixState.month += delta;
+                if (this.matrixState.month > 11) { this.matrixState.month = 0; this.matrixState.year++; }
+                if (this.matrixState.month < 0) { this.matrixState.month = 11; this.matrixState.year--; }
+                this.renderMatrix();
+            },
+
+            renderStats() {
+                const cls = this.getActiveClass();
+                const global = { P: 0, F: 0, J: 0 };
+                const body = document.getElementById('stats-body');
+                body.innerHTML = "";
+                const reports = cls.students.map(s => {
+                    const st = { P: 0, F: 0, J: 0 };
+                    Object.values(cls.history).forEach(day => { 
+                        const status = day[s.id];
+                        if (status === 'P') { st.P++; global.P++; }
+                        else if (status === 'F') { st.F++; global.F++; }
+                        else if (status === 'J') { st.J++; global.J++; }
+                    });
+                    const total = st.P + st.F + st.J;
+                    const freq = total > 0 ? ((st.P / total) * 100).toFixed(1) : "0.0";
+                    return { name: s.name, ...st, freq };
+                }).sort((a,b) => a.name.localeCompare(b.name));
+
+                reports.forEach(r => { 
+                    body.innerHTML += `<td class="p-3 font-bold uppercase truncate max-w-[120px] text-fg">${r.name}<td class="p-3 text-center font-bold text-accent-green">${r.P}<td class="p-3 text-center font-bold text-accent-danger">${r.F}<td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-brand/10 text-brand font-black">${r.freq}%</span>`; 
+                });
+                
+                const ctx = document.getElementById('chart-attendance').getContext('2d');
+                if (this.chartInstance) this.chartInstance.destroy();
+                this.chartInstance = new Chart(ctx, { 
+                    type: 'doughnut', 
+                    data: { 
+                        labels: ['P', 'F', 'J'], 
+                        datasets: [{ data: [global.P, global.F, global.J], backgroundColor: ['#16a34a', '#dc2626', '#d97706'], borderWidth: 0, hoverOffset: 10 }] 
+                    }, 
+                    options: { cutout: '80%', plugins: { legend: { display: false } } } 
+                });
+                document.getElementById('chart-legend').innerHTML = `<div><p class="text-xs font-black text-accent-green">${global.P}</p><p class="text-[7px] text-sub uppercase font-bold">P</p></div><div><p class="text-xs font-black text-accent-danger">${global.F}</p><p class="text-[7px] text-sub uppercase font-bold">F</p></div><div><p class="text-xs font-black text-accent-amber">${global.J}</p><p class="text-[7px] text-sub uppercase font-bold">J</p></div>`;
+            },
+
+            async exportDiaryPDF() {
+                const cls = this.getActiveClass();
+                const date = document.getElementById('current-date').value;
+                setLoading(true, "Gerando Documento...");
+                const off = document.getElementById('pdf-offscreen');
+                off.style.left = '0px'; 
+                
+                try {
+                    document.getElementById('pdf-title-tpl').innerText = "DIÁRIO DE CHAMADA";
+                    document.getElementById('pdf-date-tpl').innerText = new Date(date+'T12:00:00').toLocaleDateString('pt-PT', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase();
+                    document.getElementById('pdf-class-tpl').innerText = cls.name;
+                    
+                    let h = `<table style="width:100%; border-collapse:collapse; border:1px solid #ddd; background: white !important; font-family: sans-serif;">`;
+                    h += `<tr style="background:#ffab07 !important; color:black !important; font-weight:900;">
+                            <th style="padding:8px; border:1px solid #ddd; font-size:9px; width:30px; text-align:center;">Nº</th>
+                            <th style="padding:8px; border:1px solid #ddd; font-size:9px; text-align:left;">NOME</th>
+                            <th style="padding:8px; border:1px solid #ddd; font-size:9px; text-align:left;">DATA NASC.</th>
+                            <th style="padding:8px; border:1px solid #ddd; font-size:9px; text-align:center;">IDADE</th>
+                            <th style="padding:8px; border:1px solid #ddd; font-size:9px; text-align:center;">STATUS</th>
+                           `;
+                    
+                    [...cls.students].sort((a,b) => a.name.localeCompare(b.name)).forEach((s, i) => {
+                        const st = (cls.history[date] || {})[s.id] || '-';
+                        const color = st === 'P' ? '#16a34a' : (st === 'F' ? '#dc2626' : (st === 'J' ? '#d97706' : '#999'));
+                        const bgColor = (i % 2 === 0) ? '#ffffff' : '#f9f9f9';
+                        const age = this.calculateAge(s.birthDate);
+                        h += `<tr style="background:${bgColor} !important;">
+                                <td style="padding:6px; border:1px solid #ddd; font-size:9px; text-align:center; color: black !important;">${(i+1).toString().padStart(2,'0')}
+                                <td style="padding:6px; border:1px solid #ddd; font-size:9px; font-weight:700; color: black !important;">${s.name}
+                                <td style="padding:6px; border:1px solid #ddd; font-size:9px; color: black !important;">${s.birthDate || '-'}
+                                <td style="padding:6px; border:1px solid #ddd; font-size:9px; text-align:center; color: black !important;">${age}
+                                <td style="padding:6px; border:1px solid #ddd; font-size:9px; text-align:center; font-weight:900; color:${color} !important;">${st || '-'}
+                               `;
+                    });
+                    h += `</table>`;
+                    
+                    document.getElementById('pdf-table-target').innerHTML = h;
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    const opt = { 
+                        margin: 0.5, 
+                        filename: `Diario_${cls.name}_${date}.pdf`, 
+                        image: { type: 'jpeg', quality: 1 }, 
+                        html2canvas: { scale: 3, useCORS: true, logging: false, backgroundColor: '#ffffff' }, 
+                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
+                    };
+                    await html2pdf().set(opt).from(document.getElementById('pdfCaptureArea')).save();
+                } finally {
+                    off.style.left = '-9999px';
+                    setLoading(false);
+                }
+            },
+
+            exportCSV() {
+                const cls = this.getActiveClass();
+                let csv = `ID;Nome;Data Nascimento;Sexo;Status Atual\n`;
+                const date = document.getElementById('current-date').value;
+                cls.students.forEach(s => csv += `${s.id};${s.name};${s.birthDate || ''};${s.sexo || ''};${cls.history[date]?.[s.id] || '-'}\n`);
+                saveAs(new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8' }), `SGS_${cls.name}_Export.csv`);
+            },
+
+            importCSV(input) {
+                const file = input.files[0]; if (!file) return;
+                const r = new FileReader();
+                r.onload = (e) => {
+                    const lines = e.target.result.split('\n').filter(l => l.trim());
+                    if (lines.length < 2) return;
+                    const sep = lines[0].includes(';') ? ';' : ',';
+                    const headers = lines[0].split(sep).map(h => h.toLowerCase().replace(/["']/g, '').trim());
+                    const cls = this.getActiveClass();
+                    let added = 0, updated = 0;
+                    lines.slice(1).forEach(l => {
+                        if (!l.trim()) return;
+                        const cols = l.split(sep);
+                        const studentData = {};
+                        headers.forEach((h, idx) => {
+                            if (idx < cols.length) studentData[h] = cols[idx].replace(/["']/g, '').trim();
+                        });
+                        const name = (studentData.nome || studentData.name || '').toUpperCase();
+                        if (!name) return;
+                        const existing = cls.students.find(s => s.name === name);
+                        const birthRaw = studentData['data nascimento'] || studentData['data_nasc'] || studentData['datanasc'] || '';
+                        const birth = birthRaw ? this.parseDateToISO(birthRaw) : '';
+                        const sexo = studentData.sexo || '';
+                        const idNum = studentData.id || studentData.nº || '';
+
+                        if (existing) {
+                            let changed = false;
+                            if (birth && !existing.birthDate) { existing.birthDate = birth; changed = true; }
+                            if (sexo && !existing.sexo) { existing.sexo = sexo; changed = true; }
+                            if (idNum && !existing.idNumber) { existing.idNumber = idNum; changed = true; }
+                            if (changed) updated++;
+                        } else {
+                            cls.students.push({
+                                id: 's_' + Date.now() + Math.random(),
+                                name: name,
+                                birthDate: birth,
+                                sexo: sexo,
+                                idNumber: idNum
+                            });
+                            added++;
+                        }
+                    });
+                    if (added > 0 || updated > 0) {
+                        this.save(); this.render();
+                        this.showMessage("Importação concluída", `${added} novo(s) aluno(s) adicionado(s).\n${updated} aluno(s) existente(s) atualizado(s).`, "success");
+                    } else {
+                        this.showMessage("Aviso", "Nenhum aluno novo ou atualizado foi encontrado.", "error");
+                    }
+                };
+                r.readAsText(file);
+            },
+
+            addClass() { 
+                const name = document.getElementById('new-class-name').value.trim().toUpperCase(); 
+                if (name) { 
+                    const id = 'c_' + Date.now(); 
+                    this.data.classes.push({ id, name, students: [], history: {} }); 
+                    this.data.activeClassId = id; 
+                    document.getElementById('new-class-name').value = ''; 
+                    this.save(); this.render(); this.renderClassList(); 
+                } 
+            },
+
+            renderClassList() {
+                const list = document.getElementById('class-list');
+                list.innerHTML = this.data.classes.map(c => `
+                    <div class="flex items-center justify-between p-3 glass-card rounded-xl">
+                        <span class="text-[10px] font-black uppercase text-fg truncate">${c.name}</span>
+                        <button onclick="App.deleteClass('${c.id}')" class="text-accent-danger p-1 hover:bg-accent-danger/10 rounded-lg">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            },
+
+            deleteClass(id) { 
+                if (this.data.classes.length === 1) return; 
+                this.confirm("Excluir Unidade?", "Todos os dados históricos desta turma serão perdidos permanentemente.", () => { 
+                    this.data.classes = this.data.classes.filter(c => c.id !== id); 
+                    if (this.data.activeClassId === id) this.data.activeClassId = this.data.classes[0].id; 
+                    this.save(); this.render(); this.renderClassList(); 
+                }); 
+            },
+
+            exportBackup() { saveAs(new Blob([JSON.stringify(this.data)], { type: 'application/json' }), `Backup_SGS_MASTER_${Date.now()}.json`); },
+            importBackup(input) { 
+                const file = input.files[0]; 
+                if (file) { 
+                    const r = new FileReader(); 
+                    r.onload = (e) => { 
+                        try { 
+                            const d = JSON.parse(e.target.result); 
+                            if(d.classes) { this.data = d; this.save(); location.reload(); } 
+                        } catch(err) { this.showMessage("Erro", "Backup inválido ou corrompido.", "error"); } 
+                    }; 
+                    r.readAsText(file); 
+                } 
+            },
+
+            toggleTheme() { this.data.theme = this.data.theme === 'dark' ? 'light' : 'dark'; this.applyTheme(); this.save(); },
+            applyTheme() { 
+                if(this.data.theme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    document.body.classList.add('light-mode'); 
+                } else {
+                    document.documentElement.classList.add('dark');
+                    document.body.classList.remove('light-mode'); 
+                }
+                const icon = document.getElementById('themeIcon');
+                if(icon) {
+                    icon.setAttribute('data-lucide', this.data.theme === 'dark' ? 'sun' : 'moon'); 
+                    lucide.createIcons(); 
+                }
+            },
+
+            openModal(id) { document.getElementById(id).classList.add('active'); if(id === 'modal-turmas') this.renderClassList(); },
+            closeModal() { document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('active')); },
+            
+            confirm(title, desc, onConfirm) { 
+                const modal = document.getElementById('modal-confirm');
+                const cancelBtn = document.getElementById('confirm-cancel');
+                const confirmBtn = document.getElementById('confirm-yes');
+                document.getElementById('confirm-title').innerText = title; 
+                document.getElementById('confirm-desc').innerText = desc; 
+                cancelBtn.style.display = 'flex';
+                confirmBtn.innerText = 'Confirmar';
+                confirmBtn.onclick = () => { onConfirm(); this.closeModal(); };
+                this.openModal('modal-confirm'); 
+            },
+
+            showMessage(title, message, type = 'info') {
+                const modal = document.getElementById('modal-confirm');
+                const cancelBtn = document.getElementById('confirm-cancel');
+                const confirmBtn = document.getElementById('confirm-yes');
+                const iconDiv = modal.querySelector('.w-14.h-14');
+                
+                document.getElementById('confirm-title').innerText = title;
+                document.getElementById('confirm-desc').innerText = message;
+                cancelBtn.style.display = 'none';
+                confirmBtn.innerText = 'OK';
+                confirmBtn.onclick = () => this.closeModal();
+                
+                if (type === 'error') {
+                    iconDiv.className = 'w-14 h-14 bg-accent-danger/10 text-accent-danger rounded-full flex items-center justify-center mx-auto mb-4';
+                    iconDiv.innerHTML = '<i data-lucide="alert-circle" class="w-8 h-8"></i>';
+                } else if (type === 'success') {
+                    iconDiv.className = 'w-14 h-14 bg-accent-green/10 text-accent-green rounded-full flex items-center justify-center mx-auto mb-4';
+                    iconDiv.innerHTML = '<i data-lucide="check-circle-2" class="w-8 h-8"></i>';
+                } else {
+                    iconDiv.className = 'w-14 h-14 bg-brand/10 text-brand rounded-full flex items-center justify-center mx-auto mb-4';
+                    iconDiv.innerHTML = '<i data-lucide="info" class="w-8 h-8"></i>';
+                }
+                lucide.createIcons();
+                this.openModal('modal-confirm');
+            },
+
+            confirmAction(title, desc, action) { this.confirm(title, desc, action); },
+            
+            toggleSel(id) { 
+                if(this.selectedUids.has(id)) this.selectedUids.delete(id); 
+                else this.selectedUids.add(id); 
+                this.updateSelUI(); 
+            },
+
+            toggleSelectAll(v) { 
+                const cls = this.getActiveClass(); 
+                const search = document.getElementById('student-search').value.toLowerCase(); 
+                cls.students.filter(s => s.name.toLowerCase().includes(search)).forEach(s => v ? this.selectedUids.add(s.id) : this.selectedUids.delete(s.id)); 
+                this.updateSelUI(); 
+            },
+
+            updateSelUI() { 
+                const count = this.selectedUids.size; 
+                const el = document.getElementById('sel-count'); 
+                if(el) el.innerText = count; 
+                document.getElementById('selection-toolbar').classList.toggle('visible', count > 0); 
+                this.render(); 
+            },
+
+            clearSelection() { 
+                this.selectedUids.clear(); 
+                const el = document.getElementById('select-all'); 
+                if(el) el.checked = false; 
+                this.updateSelUI(); 
+            },
+
+            batchAction(st) { 
+                const cls = this.getActiveClass(); 
+                const date = document.getElementById('current-date').value; 
+                if(!cls.history[date]) cls.history[date] = {}; 
+                this.selectedUids.forEach(id => cls.history[date][id] = st); 
+                this.save(); this.clearSelection(); 
+            },
+
+            batchDeleteSelected() { 
+                this.confirm("Remover Marcados?", `Eliminar ${this.selectedUids.size} alunos selecionados da turma atual?`, () => { 
+                    const cls = this.getActiveClass(); 
+                    cls.students = cls.students.filter(s => !this.selectedUids.has(s.id)); 
+                    this.save(); this.clearSelection(); 
+                }); 
+            },
+
+            clearActiveStudents() { 
+                const cls = this.getActiveClass(); 
+                cls.students = []; 
+                cls.history = {}; 
+                this.save(); this.render(); 
+            },
+
+            async exportGenericPDF(data) {
+                if (!data || data.length === 0) {
+                    this.showMessage("Aviso", "Não há dados para exportar.", "error");
+                    return;
+                }
+
+                setLoading(true, "Gerando PDF com AutoTable...");
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const headers = data[0].map((_, idx) => `Coluna ${idx + 1}`);
+                    const body = data.map(row => row.map(cell => cell || ""));
+
+                    const options = {
+                        head: [headers],
+                        body: body,
+                        theme: 'grid',
+                        styles: {
+                            fontSize: 8,
+                            cellPadding: 2,
+                            valign: 'middle',
+                            halign: 'left',
+                            overflow: 'linebreak'
+                        },
+                        headStyles: {
+                            fillColor: [255, 171, 7],
+                            textColor: 0,
+                            fontStyle: 'bold',
+                            halign: 'center'
+                        },
+                        margin: { top: 20, left: 10, right: 10, bottom: 20 },
+                        didDrawPage: function (data) {
+                            doc.setFontSize(16);
+                            doc.setTextColor(255, 171, 7);
+                            doc.text("DADOS EXTRAÍDOS", data.settings.margin.left, 15);
+                            doc.setFontSize(9);
+                            doc.setTextColor(100);
+                            doc.text(`Data: ${new Date().toLocaleDateString('pt-PT')}`, data.settings.margin.left, 22);
+                            doc.text(`CONVERSOR MASTER`, data.settings.margin.left, 29);
+                        }
+                    };
+
+                    doc.autoTable(options);
+                    doc.save(`Extracao_${Date.now()}.pdf`);
+                } catch (error) {
+                    console.error("Erro ao gerar PDF:", error);
+                    this.showMessage("Erro", "Ocorreu um erro ao gerar o PDF. Tente novamente.", "error");
+                } finally {
+                    setLoading(false);
+                }
             }
         };
 
-        setTimeout(() => {
-            html2pdf().set(opt).from(element).save().then(() => {
-                element.classList.remove('pdf-export-mode');
-                showToast("PDF GERADO COM SUCESSO");
-            }).catch(err => {
-                element.classList.remove('pdf-export-mode');
-                showToast("ERRO NA GERAÇÃO", "error");
-            });
-        }, 500);
-    };
+        const Converter = {
+            structured: [],
+            async handleFile(file) {
+                if(!file) return;
+                setLoading(true, "Lendo Documento...");
+                const r = new FileReader();
+                r.onload = async (e) => {
+                    try {
+                        if(file.name.toLowerCase().endsWith('.pdf')) {
+                            const loadingTask = pdfjsLib.getDocument({data: new Uint8Array(e.target.result)});
+                            const pdf = await loadingTask.promise;
+                            let text = "";
+                            for(let i=1; i<=pdf.numPages; i++) {
+                                const page = await pdf.getPage(i), content = await page.getTextContent();
+                                const items = content.items.sort((a,b) => (Math.abs(a.transform[5] - b.transform[5]) > 2) ? b.transform[5] - a.transform[5] : a.transform[4] - b.transform[4]);
+                                let lastY = -1;
+                                items.forEach(it => { if(lastY !== -1 && Math.abs(it.transform[5] - lastY) > 2) text += "\n"; text += it.str + " "; lastY = it.transform[5]; });
+                            }
+                            this.updateRaw(text);
+                        } else {
+                            this.updateRaw(e.target.result);
+                        }
+                    } catch(err) { 
+                        console.error(err);
+                        App.showMessage("Erro", "Falha ao ler o arquivo. Formato não suportado.", "error");
+                    } finally { 
+                        setLoading(false); 
+                    }
+                };
+                if(file.name.toLowerCase().endsWith('.pdf')) r.readAsArrayBuffer(file); 
+                else r.readAsText(file);
+            },
 
-    const handleUndo = () => {
-        if (!lastActionUndo) return;
-        const cls = data.classes.find(c => c.id === lastActionUndo.clsId);
-        if (lastActionUndo.type === 'del') cls.students.splice(lastActionUndo.idx, 0, lastActionUndo.student);
-        else if (lastActionUndo.type === 'del_all') cls.students = lastActionUndo.students;
-        lastActionUndo = null; $('#undo-toast').classList.remove('show');
-        renderStudentList(); saveData(true);
-        showToast("RESTAURADO");
-    };
+            updateRaw(text) {
+                const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                const sep = text.includes(';') ? ';' : (text.includes('\t') ? '\t' : (text.includes(',') ? ',' : null));
+                this.structured = lines.map(line => sep ? line.split(sep).map(c => c.trim()) : [line]);
+                document.getElementById('manual-input').value = text;
+                this.renderPreview();
+                document.getElementById('convert-preview').classList.remove('hidden');
+                document.getElementById('importCountTag').innerText = this.structured.length;
+            },
 
-    const openModal = (s) => { const m = $(s); if (m) { m.classList.add('active'); $('#app-body').classList.add('no-scroll'); } };
-    const closeModal = () => { $$('.modal-backdrop').forEach(m => m.classList.remove('active')); if (sessionStorage.getItem(LOGGED_IN_KEY) === 'true') $('#app-body').classList.remove('no-scroll'); };
-    const showToast = (m, type = 'success') => { const t = $('#toast'); if (t) { t.textContent = m; t.className = `toast show fixed bottom-8 left-1/2 bg-grad-dark text-lime-vibrant py-5 px-12 rounded-full shadow-2xl font-black text-[11px] uppercase text-center border border-lime-vibrant/30 min-w-[300px] ${type === 'error' ? 'text-rose-400 border-rose-400/30' : ''}`; setTimeout(() => t.classList.remove('show'), 2500); } };
-    const showUndoToast = (m) => { const um = $('#undo-message'); const ut = $('#undo-toast'); if(um && ut) { um.textContent = m; ut.classList.add('show'); setTimeout(() => ut.classList.remove('show'), 6000); } };
-    const showConfirmationModal = (title, msg, onConfirm) => { $('#modalTitle').textContent = title; $('#modalMessage').textContent = msg; currentConfirmCallback = onConfirm; openModal('#confirmationModal'); };
-    
-    const initTheme = () => {
-        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
-        const update = () => { 
-            const isDark = document.documentElement.classList.contains('dark'); 
-            $('#theme-toggle-btn').innerHTML = isDark ? `<svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>` : `<svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>`; 
+            renderPreview() {
+                const h = document.getElementById('preview-header'), b = document.getElementById('preview-body');
+                h.innerHTML = ""; b.innerHTML = "";
+                if(this.structured.length === 0) return;
+                const max = Math.max(...this.structured.map(r => r.length));
+                for(let i=0; i<max; i++) h.innerHTML += `<th class="p-2 border-b border-white/10 opacity-30 text-center uppercase text-[8px] text-fg">C${i+1}</th>`;
+                this.structured.forEach(row => { 
+                    const tr = document.createElement('tr'); 
+                    for(let i=0; i<max; i++) tr.innerHTML += `<td class="p-2 truncate max-w-[120px] text-center border-border/10 text-[9px] text-fg">${row[i] || ""}`; 
+                    b.appendChild(tr); 
+                });
+            },
+
+            sync() {
+                if(this.structured.length === 0) {
+                    App.showMessage("Aviso", "Não há dados extraídos para sincronizar.", "error");
+                    return;
+                }
+
+                const cls = App.getActiveClass();
+                let added = 0, updated = 0;
+
+                const normalize = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/g, '');
+                const firstRow = this.structured[0];
+                const hasHeader = firstRow.some(cell => normalize(cell).includes('nome') || normalize(cell).includes('data') || normalize(cell).includes('sexo'));
+                
+                let nameIdx = -1, birthIdx = -1, sexoIdx = -1, idIdx = -1;
+                if (hasHeader) {
+                    firstRow.forEach((cell, idx) => {
+                        const n = normalize(cell);
+                        if (n.includes('nome') || n === 'name' || n === 'aluno') nameIdx = idx;
+                        if (n.includes('data') && (n.includes('nasc') || n.includes('aniversario'))) birthIdx = idx;
+                        if (n === 'sexo' || n === 'genero') sexoIdx = idx;
+                        if (n === 'id' || n === 'nº' || n === 'numero') idIdx = idx;
+                    });
+                }
+
+                const startRow = hasHeader ? 1 : 0;
+
+                for (let i = startRow; i < this.structured.length; i++) {
+                    const row = this.structured[i];
+                    if (!row.length) continue;
+                    
+                    let name = '';
+                    let birthRaw = '';
+                    let sexo = '';
+                    let idNum = '';
+
+                    if (nameIdx !== -1 && row[nameIdx]) name = row[nameIdx];
+                    else if (row[0]) name = row[0];
+
+                    if (birthIdx !== -1 && row[birthIdx]) birthRaw = row[birthIdx];
+                    if (sexoIdx !== -1 && row[sexoIdx]) sexo = row[sexoIdx];
+                    if (idIdx !== -1 && row[idIdx]) idNum = row[idIdx];
+
+                    name = name.trim().toUpperCase();
+                    if (name.length < 2) continue;
+
+                    const birth = birthRaw ? App.parseDateToISO(birthRaw) : '';
+
+                    const existing = cls.students.find(s => s.name === name);
+                    if (existing) {
+                        let changed = false;
+                        if (birth && !existing.birthDate) { existing.birthDate = birth; changed = true; }
+                        if (sexo && !existing.sexo) { existing.sexo = sexo; changed = true; }
+                        if (idNum && !existing.idNumber) { existing.idNumber = idNum; changed = true; }
+                        if (changed) updated++;
+                    } else {
+                        cls.students.push({
+                            id: 's_' + Date.now() + Math.random(),
+                            name: name,
+                            birthDate: birth,
+                            sexo: sexo,
+                            idNumber: idNum
+                        });
+                        added++;
+                    }
+                }
+
+                if (added > 0 || updated > 0) {
+                    App.save();
+                    App.switchTab('diary');
+                    App.render();
+                    App.showMessage("Sincronização concluída", `${added} novo(s) aluno(s) adicionado(s).\n${updated} aluno(s) existente(s) atualizado(s) com dados de nascimento/sexo.`, "success");
+                } else {
+                    App.showMessage("Aviso", "Nenhum aluno novo foi encontrado nos dados extraídos.\nVerifique se o nome está presente e se a turma atual é a correta.", "error");
+                }
+                this.reset();
+            },
+
+            reset() { 
+                this.structured = []; 
+                document.getElementById('manual-input').value = ""; 
+                document.getElementById('convert-preview').classList.add('hidden'); 
+            },
+
+            exportExt(type) {
+                const fn = `SGS_Extract_${Date.now()}`;
+                if(type === 'csv') saveAs(new Blob(["\uFEFF" + this.structured.map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(";")).join("\n")], {type: "text/csv"}), fn+'.csv');
+                else if(type === 'json') saveAs(new Blob([JSON.stringify(this.structured, null, 2)], {type: "application/json"}), fn+'.json');
+                else if(type === 'txt') saveAs(new Blob([this.structured.map(r => r.join(" | ")).join("\n")], {type: "text/plain"}), fn+'.txt');
+                else if(type === 'pdf') App.exportGenericPDF(this.structured);
+            }
         };
-        update();
-        $('#theme-toggle-btn').addEventListener('click', () => { 
-            document.documentElement.classList.toggle('dark'); 
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); 
-            update(); 
-        });
-    };
 
-    window.filterByStatus = (e, status) => { currentFilter = status; $$('.filter-btn').forEach(b => b.classList.remove('active', 'bg-indigo-intense', 'text-lime-vibrant')); e.currentTarget.classList.add('active', 'bg-indigo-intense', 'text-lime-vibrant'); renderStudentList(); };
+        function setLoading(v, m) { 
+            const ov = document.getElementById('loading-overlay'); 
+            if(ov) ov.classList.toggle('hidden', !v); 
+            if(m) { 
+                const msg = document.getElementById('loading-msg'); 
+                if(msg) msg.innerText = m; 
+            } 
+        }
 
-    init();
-});
-</script>
+        window.onload = () => App.init();
+    </script>
 </body>
 </html>
